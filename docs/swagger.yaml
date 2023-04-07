@@ -1,0 +1,1020 @@
+basePath: /
+definitions:
+  helpers.ResponseMessage:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  model.AddComment:
+    properties:
+      message:
+        example: A comment
+        type: string
+      photo_id:
+        example: photo-123
+        type: string
+    type: object
+  model.AddPhoto:
+    properties:
+      caption:
+        example: A caption
+        type: string
+      photo_url:
+        example: https://www.example.com/image.jpg
+        type: string
+      title:
+        example: A Title
+        type: string
+    type: object
+  model.AddSocialMedia:
+    properties:
+      name:
+        example: Example
+        type: string
+      social_media_url:
+        example: https://www.example.com/johndoe
+        type: string
+    type: object
+  model.AddedComment:
+    properties:
+      created_at:
+        example: the created at generated here
+        type: string
+      id:
+        example: here is the generated comment id
+        type: string
+      message:
+        example: A comment
+        type: string
+      photo_id:
+        example: here is the generated photo id
+        type: string
+      user_id:
+        example: here is the generated user id
+        type: string
+    type: object
+  model.AddedPhoto:
+    properties:
+      caption:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      photo_url:
+        type: string
+      title:
+        type: string
+      user_id:
+        type: string
+    type: object
+  model.AddedSocialMedia:
+    properties:
+      created_at:
+        example: the created at generated here
+        type: string
+      id:
+        example: the social media id generated here
+        type: string
+      name:
+        example: Example
+        type: string
+      social_media_url:
+        example: https://www.example.com/johndoe
+        type: string
+      user_id:
+        example: here is the generated user id
+        type: string
+    type: object
+  model.FetchedComment:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      message:
+        type: string
+      photo:
+        $ref: '#/definitions/model.Photo'
+      photo_id:
+        type: string
+      updated_at:
+        type: string
+      user:
+        $ref: '#/definitions/src_modules_comment_model.User'
+      user_id:
+        type: string
+    type: object
+  model.FetchedPhoto:
+    properties:
+      caption:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      photo_url:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+      user:
+        $ref: '#/definitions/src_modules_photo_model.User'
+      user_id:
+        type: string
+    type: object
+  model.LoggedinUser:
+    properties:
+      token:
+        example: the token generated here
+        type: string
+    type: object
+  model.LoginUser:
+    properties:
+      email:
+        example: johndoe@example.com
+        type: string
+      password:
+        example: secret
+        type: string
+    type: object
+  model.Photo:
+    properties:
+      caption:
+        type: string
+      id:
+        type: string
+      photo_url:
+        type: string
+      title:
+        type: string
+      user_id:
+        type: string
+    type: object
+  model.RegisterUser:
+    properties:
+      age:
+        example: 8
+        type: integer
+      email:
+        example: johndoe@example.com
+        type: string
+      password:
+        example: secret
+        type: string
+      username:
+        example: johndoe
+        type: string
+    type: object
+  model.RegisteredUser:
+    properties:
+      age:
+        example: 8
+        type: integer
+      email:
+        example: johndoe@example.com
+        type: string
+      id:
+        example: the user id generated here
+        type: string
+      username:
+        example: johndoe
+        type: string
+    type: object
+  model.ResponseDataAddedComment:
+    properties:
+      data:
+        $ref: '#/definitions/model.AddedComment'
+      status:
+        example: success
+        type: string
+    type: object
+  model.ResponseDataAddedPhoto:
+    properties:
+      data:
+        $ref: '#/definitions/model.AddedPhoto'
+      status:
+        example: success
+        type: string
+    type: object
+  model.ResponseDataAddedSocialMedia:
+    properties:
+      data:
+        $ref: '#/definitions/model.AddedSocialMedia'
+      status:
+        example: success
+        type: string
+    type: object
+  model.ResponseDataFetchedComment:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.FetchedComment'
+        type: array
+      status:
+        example: success
+        type: string
+    type: object
+  model.ResponseDataFetchedPhoto:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.FetchedPhoto'
+        type: array
+      status:
+        example: success
+        type: string
+    type: object
+  model.ResponseDataFetchedSocialMedia:
+    properties:
+      data:
+        $ref: '#/definitions/model.SocialMedias'
+      status:
+        example: success
+        type: string
+    type: object
+  model.ResponseDataLoggedinUser:
+    properties:
+      data:
+        $ref: '#/definitions/model.LoggedinUser'
+      status:
+        example: success
+        type: string
+    type: object
+  model.ResponseDataRegisteredUser:
+    properties:
+      data:
+        $ref: '#/definitions/model.RegisteredUser'
+      status:
+        example: success
+        type: string
+    type: object
+  model.ResponseDataUpdatedComment:
+    properties:
+      data:
+        $ref: '#/definitions/model.UpdatedComment'
+      status:
+        example: success
+        type: string
+    type: object
+  model.ResponseDataUpdatedPhoto:
+    properties:
+      data:
+        $ref: '#/definitions/model.UpdatedPhoto'
+      status:
+        example: success
+        type: string
+    type: object
+  model.ResponseDataUpdatedSocialMedia:
+    properties:
+      data:
+        $ref: '#/definitions/model.UpdatedSocialMedia'
+      status:
+        example: success
+        type: string
+    type: object
+  model.ResponseDataUpdatedUser:
+    properties:
+      data:
+        $ref: '#/definitions/model.UpdatedUser'
+      status:
+        example: success
+        type: string
+    type: object
+  model.ResponseMessageDeletedComment:
+    properties:
+      message:
+        example: your comment has been successfully deleted
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  model.ResponseMessageDeletedPhoto:
+    properties:
+      message:
+        example: your photo has been successfully deleted
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  model.ResponseMessageDeletedSocialMedia:
+    properties:
+      message:
+        example: your social media has been successfully deleted
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  model.ResponseMessageDeletedUser:
+    properties:
+      message:
+        example: your account has been successfully deleted
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  model.SocialMedia:
+    properties:
+      created_at:
+        example: here is the generated created at
+        type: string
+      id:
+        example: here is the generated social media id
+        type: string
+      name:
+        example: Example
+        type: string
+      social_media_url:
+        example: https://www.example.com/johndoe
+        type: string
+      updated_at:
+        example: here is the generated updated at
+        type: string
+      user:
+        $ref: '#/definitions/src_modules_socialmedia_model.User'
+      user_id:
+        example: here is the generated user id
+        type: string
+    type: object
+  model.SocialMedias:
+    properties:
+      social_medias:
+        items:
+          $ref: '#/definitions/model.SocialMedia'
+        type: array
+    type: object
+  model.UpdateComment:
+    properties:
+      message:
+        example: A new comment
+        type: string
+    type: object
+  model.UpdatePhoto:
+    properties:
+      caption:
+        example: A new caption
+        type: string
+      photo_url:
+        example: https://www.example.com/new-image.jpg
+        type: string
+      title:
+        example: A new title
+        type: string
+    type: object
+  model.UpdateSocialMedia:
+    properties:
+      name:
+        example: New Example
+        type: string
+      social_media_url:
+        example: https://www.newexample.com/johndoe
+        type: string
+    type: object
+  model.UpdateUser:
+    properties:
+      email:
+        example: newjohndoe@example.com
+        type: string
+      username:
+        example: newjohndoe
+        type: string
+    type: object
+  model.UpdatedComment:
+    properties:
+      caption:
+        type: string
+      id:
+        type: string
+      photo_url:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  model.UpdatedPhoto:
+    properties:
+      caption:
+        type: string
+      id:
+        type: string
+      photo_url:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  model.UpdatedSocialMedia:
+    properties:
+      id:
+        example: here is the generated social media id
+        type: string
+      name:
+        example: New Example
+        type: string
+      social_media_url:
+        example: https://www.newexample.com/johndoe
+        type: string
+      updated_at:
+        example: the updated at generated here
+        type: string
+      user_id:
+        example: here is the generated user id
+        type: string
+    type: object
+  model.UpdatedUser:
+    properties:
+      age:
+        example: 8
+        type: integer
+      email:
+        example: newjohndoe@example.com
+        type: string
+      id:
+        example: here is the generated user id
+        type: string
+      updated_at:
+        example: the updated at generated here
+        type: string
+      username:
+        example: newjohndoe
+        type: string
+    type: object
+  src_modules_comment_model.User:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      username:
+        type: string
+    type: object
+  src_modules_photo_model.User:
+    properties:
+      email:
+        type: string
+      username:
+        type: string
+    type: object
+  src_modules_socialmedia_model.User:
+    properties:
+      email:
+        example: johndoe@example.com
+        type: string
+      id:
+        example: here is the generated user id
+        type: string
+      username:
+        example: johndoe
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: gusrylmubarok@gmail.com
+    name: gusrylmubarok
+  description: mygram is a free photo sharing app written in Go. People can share,
+    view, and comment photos by everyone. Anyone can create an account by registering
+    an email address and creating a username.
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+  title: mygram backend
+  version: 1.0.0
+paths:
+  /comments:
+    get:
+      consumes:
+      - application/json
+      description: Get all comments with authentication user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ResponseDataFetchedComment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Fetch all comments
+      tags:
+      - comments
+    post:
+      consumes:
+      - application/json
+      description: create and store a comment with authentication user
+      parameters:
+      - description: Add Comment
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/model.AddComment'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.ResponseDataAddedComment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Add a comment
+      tags:
+      - comments
+  /comments/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a comment by id with authentication user
+      parameters:
+      - description: Comment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ResponseMessageDeletedComment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Delete a comment
+      tags:
+      - comments
+    put:
+      consumes:
+      - application/json
+      description: Update a comment by id with authentication user
+      parameters:
+      - description: Comment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Comment
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateComment'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ResponseDataUpdatedComment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Update a comment
+      tags:
+      - comments
+  /photos:
+    get:
+      consumes:
+      - application/json
+      description: Get all photos with authentication user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ResponseDataFetchedPhoto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Fetch all photos
+      tags:
+      - photos
+    post:
+      consumes:
+      - application/json
+      description: Create and store a photo with authentication user
+      parameters:
+      - description: Add Photo
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/model.AddPhoto'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.ResponseDataAddedPhoto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Store a photo
+      tags:
+      - photos
+  /photos/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a photo by id with authentication user
+      parameters:
+      - description: Photo ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ResponseMessageDeletedPhoto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Delete a photo
+      tags:
+      - photos
+    put:
+      consumes:
+      - application/json
+      description: Update a photo by id with authentication user
+      parameters:
+      - description: Photo ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Photo
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdatePhoto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ResponseDataUpdatedPhoto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Update a photo
+      tags:
+      - photos
+  /socialmedias:
+    get:
+      consumes:
+      - application/json
+      description: Get all social media with authentication user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ResponseDataFetchedSocialMedia'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Fetch all social media
+      tags:
+      - socialmedias
+    post:
+      consumes:
+      - application/json
+      description: Create and store a social media with authentication user
+      parameters:
+      - description: Add Social Media
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/model.AddSocialMedia'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.ResponseDataAddedSocialMedia'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Add a social media
+      tags:
+      - socialmedias
+  /socialmedias/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a social media by id with authentication user
+      parameters:
+      - description: SocialMedia ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ResponseMessageDeletedSocialMedia'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Delete a social media
+      tags:
+      - socialmedias
+    put:
+      consumes:
+      - application/json
+      description: Update a social media by id with authentication user
+      parameters:
+      - description: SocialMedia ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Social Media
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateSocialMedia'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ResponseDataUpdatedSocialMedia'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Update a social media
+      tags:
+      - socialmedias
+  /users:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user with authentication user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ResponseMessageDeletedUser'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Delete a user
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update a user with authentication user
+      parameters:
+      - description: Update User
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ResponseDataUpdatedUser'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Update a user
+      tags:
+      - users
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      description: Authentication a user and retrieve a token
+      parameters:
+      - description: Login User
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.ResponseDataLoggedinUser'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      summary: Login a user
+      tags:
+      - users
+  /users/register:
+    post:
+      consumes:
+      - application/json
+      description: create and store a user
+      parameters:
+      - description: Register User
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/model.RegisterUser'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.ResponseDataRegisteredUser'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      summary: Register a user
+      tags:
+      - users
+securityDefinitions:
+  Bearer:
+    description: Description for what is this security definition being used
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
