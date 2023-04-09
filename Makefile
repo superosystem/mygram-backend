@@ -2,6 +2,9 @@
 run:
 	go run src/main.go
 
+swagger:
+	swag init -g src/main.go
+
 dev-container-start:
 	docker compose -f docker/docker-compose-dev.yml up
 

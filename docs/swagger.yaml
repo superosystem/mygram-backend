@@ -1,5 +1,113 @@
 basePath: /
 definitions:
+  domain.LoggedInUser:
+    properties:
+      token:
+        example: the token generated here
+        type: string
+    type: object
+  domain.LoginUser:
+    properties:
+      email:
+        example: johndoe@example.com
+        type: string
+      password:
+        example: secret
+        type: string
+    type: object
+  domain.RegisterUser:
+    properties:
+      age:
+        example: 8
+        type: integer
+      email:
+        example: johndoe@example.com
+        type: string
+      password:
+        example: secret
+        type: string
+      username:
+        example: johndoe
+        type: string
+    type: object
+  domain.RegisteredUser:
+    properties:
+      age:
+        example: 8
+        type: integer
+      email:
+        example: johndoe@example.com
+        type: string
+      id:
+        example: the user id generated here
+        type: string
+      username:
+        example: johndoe
+        type: string
+    type: object
+  domain.ResponseLoggedInUser:
+    properties:
+      data:
+        $ref: '#/definitions/domain.LoggedInUser'
+      status:
+        example: success
+        type: string
+    type: object
+  domain.ResponseMessageDeletedUser:
+    properties:
+      message:
+        example: your account has been successfully deleted
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  domain.ResponseRegisteredUser:
+    properties:
+      data:
+        $ref: '#/definitions/domain.RegisteredUser'
+      status:
+        example: success
+        type: string
+    type: object
+  domain.ResponseUpdatedUser:
+    properties:
+      data:
+        $ref: '#/definitions/domain.UpdatedUser'
+      status:
+        example: success
+        type: string
+    type: object
+  domain.UpdateUser:
+    properties:
+      age:
+        example: 8
+        type: integer
+      email:
+        example: newjohndoe@example.com
+        type: string
+      username:
+        example: newjohndoe
+        type: string
+    type: object
+  domain.UpdatedUser:
+    properties:
+      age:
+        example: 8
+        type: integer
+      email:
+        example: newjohndoe@example.com
+        type: string
+      id:
+        example: here is the generated user id
+        type: string
+      updated_at:
+        example: the updated at generated here
+        type: string
+      username:
+        example: newjohndoe
+        type: string
+    type: object
   helpers.ResponseMessage:
     properties:
       message:
@@ -126,21 +234,6 @@ definitions:
       user_id:
         type: string
     type: object
-  model.LoggedinUser:
-    properties:
-      token:
-        example: the token generated here
-        type: string
-    type: object
-  model.LoginUser:
-    properties:
-      email:
-        example: johndoe@example.com
-        type: string
-      password:
-        example: secret
-        type: string
-    type: object
   model.Photo:
     properties:
       caption:
@@ -152,36 +245,6 @@ definitions:
       title:
         type: string
       user_id:
-        type: string
-    type: object
-  model.RegisterUser:
-    properties:
-      age:
-        example: 8
-        type: integer
-      email:
-        example: johndoe@example.com
-        type: string
-      password:
-        example: secret
-        type: string
-      username:
-        example: johndoe
-        type: string
-    type: object
-  model.RegisteredUser:
-    properties:
-      age:
-        example: 8
-        type: integer
-      email:
-        example: johndoe@example.com
-        type: string
-      id:
-        example: the user id generated here
-        type: string
-      username:
-        example: johndoe
         type: string
     type: object
   model.ResponseDataAddedComment:
@@ -236,22 +299,6 @@ definitions:
         example: success
         type: string
     type: object
-  model.ResponseDataLoggedinUser:
-    properties:
-      data:
-        $ref: '#/definitions/model.LoggedinUser'
-      status:
-        example: success
-        type: string
-    type: object
-  model.ResponseDataRegisteredUser:
-    properties:
-      data:
-        $ref: '#/definitions/model.RegisteredUser'
-      status:
-        example: success
-        type: string
-    type: object
   model.ResponseDataUpdatedComment:
     properties:
       data:
@@ -272,14 +319,6 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/model.UpdatedSocialMedia'
-      status:
-        example: success
-        type: string
-    type: object
-  model.ResponseDataUpdatedUser:
-    properties:
-      data:
-        $ref: '#/definitions/model.UpdatedUser'
       status:
         example: success
         type: string
@@ -306,15 +345,6 @@ definitions:
     properties:
       message:
         example: your social media has been successfully deleted
-        type: string
-      status:
-        example: success
-        type: string
-    type: object
-  model.ResponseMessageDeletedUser:
-    properties:
-      message:
-        example: your account has been successfully deleted
         type: string
       status:
         example: success
@@ -377,15 +407,6 @@ definitions:
         example: https://www.newexample.com/johndoe
         type: string
     type: object
-  model.UpdateUser:
-    properties:
-      email:
-        example: newjohndoe@example.com
-        type: string
-      username:
-        example: newjohndoe
-        type: string
-    type: object
   model.UpdatedComment:
     properties:
       caption:
@@ -432,24 +453,6 @@ definitions:
         type: string
       user_id:
         example: here is the generated user id
-        type: string
-    type: object
-  model.UpdatedUser:
-    properties:
-      age:
-        example: 8
-        type: integer
-      email:
-        example: newjohndoe@example.com
-        type: string
-      id:
-        example: here is the generated user id
-        type: string
-      updated_at:
-        example: the updated at generated here
-        type: string
-      username:
-        example: newjohndoe
         type: string
     type: object
   src_modules_comment_model.User:
@@ -887,7 +890,7 @@ paths:
       summary: Update a social media
       tags:
       - socialmedias
-  /users:
+  /user:
     delete:
       consumes:
       - application/json
@@ -898,7 +901,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.ResponseMessageDeletedUser'
+            $ref: '#/definitions/domain.ResponseMessageDeletedUser'
         "400":
           description: Bad Request
           schema:
@@ -915,7 +918,7 @@ paths:
       - Bearer: []
       summary: Delete a user
       tags:
-      - users
+      - user
     put:
       consumes:
       - application/json
@@ -926,14 +929,14 @@ paths:
         name: json
         required: true
         schema:
-          $ref: '#/definitions/model.UpdateUser'
+          $ref: '#/definitions/domain.UpdateUser'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.ResponseDataUpdatedUser'
+            $ref: '#/definitions/domain.ResponseUpdatedUser'
         "400":
           description: Bad Request
           schema:
@@ -950,8 +953,8 @@ paths:
       - Bearer: []
       summary: Update a user
       tags:
-      - users
-  /users/login:
+      - user
+  /user/login:
     post:
       consumes:
       - application/json
@@ -962,14 +965,14 @@ paths:
         name: json
         required: true
         schema:
-          $ref: '#/definitions/model.LoginUser'
+          $ref: '#/definitions/domain.LoginUser'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.ResponseDataLoggedinUser'
+            $ref: '#/definitions/domain.ResponseLoggedInUser'
         "400":
           description: Bad Request
           schema:
@@ -980,8 +983,8 @@ paths:
             $ref: '#/definitions/helpers.ResponseMessage'
       summary: Login a user
       tags:
-      - users
-  /users/register:
+      - user
+  /user/register:
     post:
       consumes:
       - application/json
@@ -992,14 +995,14 @@ paths:
         name: json
         required: true
         schema:
-          $ref: '#/definitions/model.RegisterUser'
+          $ref: '#/definitions/domain.RegisterUser'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.ResponseDataRegisteredUser'
+            $ref: '#/definitions/domain.ResponseRegisteredUser'
         "400":
           description: Bad Request
           schema:
@@ -1010,7 +1013,7 @@ paths:
             $ref: '#/definitions/helpers.ResponseMessage'
       summary: Register a user
       tags:
-      - users
+      - user
 securityDefinitions:
   Bearer:
     description: Description for what is this security definition being used

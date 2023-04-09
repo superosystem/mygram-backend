@@ -9,17 +9,17 @@ import (
 	"gorm.io/gorm"
 )
 
+// User represents entity for a user
 type User struct {
-	ID              string         `gorm:"primaryKey;type:VARCHAR(50)" json:"id"`
-	Username        string         `gorm:"type:VARCHAR(50);uniqueIndex;not null" valid:"required" form:"username" json:"username" example:"johndoe"`
-	Email           string         `gorm:"type:VARCHAR(50);uniqueIndex;not null" valid:"email,required" form:"email" json:"email" example:"johndoe@example.com"`
-	Password        string         `gorm:"not null" valid:"required,minstringlength(6)" form:"password" json:"password,omitempty" example:"secret"`
-	Age             uint           `gorm:"not null" valid:"required,range(8|63)" form:"age" json:"age,omitempty" example:"8"`
-	ProfileImageUrl string         `json:"profileImageUrl,omitempty" example:"https://www.example.com/image.jpg"`
-	CreatedAt       *time.Time     `gorm:"not null;autoCreateTime" json:"created_at,omitempty"`
-	UpdatedAt       *time.Time     `gorm:"not null;autocreateTime" json:"updated_at,omitempty"`
-	Photos          *[]Photo       `json:"-"`
-	SocialMedias    *[]SocialMedia `json:"-"`
+	ID           string         `gorm:"primaryKey;type:VARCHAR(50)" json:"id"`
+	Username     string         `gorm:"column:username;type:VARCHAR(50);uniqueIndex;not null" valid:"required"`
+	Email        string         `gorm:"type:VARCHAR(50);uniqueIndex;not null" valid:"email,required"`
+	Password     string         `gorm:"not null" valid:"required,minstringlength(6)" json:"-"`
+	Age          uint           `gorm:"not null" valid:"required,range(8|63)"`
+	CreatedAt    *time.Time     `gorm:"not null;autoCreateTime"`
+	UpdatedAt    *time.Time     `gorm:"not null;autocreateTime"`
+	Photos       *[]Photo       `json:"-"`
+	SocialMedias *[]SocialMedia `json:"-"`
 }
 
 func (user *User) BeforeCreate(db *gorm.DB) (err error) {
@@ -41,8 +41,8 @@ func (user *User) BeforeUpdate(db *gorm.DB) (err error) {
 }
 
 type UserUseCase interface {
-	Register(context.Context, *User) error
-	Login(context.Context, *User) error
+	Register(context.Context, *RegisterUser) (User, error)
+	Login(context.Context, *LoginUser) (User, error)
 	Update(context.Context, User) (User, error)
 	Delete(context.Context, string) error
 }
@@ -52,4 +52,71 @@ type UserRepository interface {
 	Login(context.Context, *User) error
 	Update(context.Context, User) (User, error)
 	Delete(context.Context, string) error
+}
+
+// Represents for register user
+type RegisterUser struct {
+	Email    string `json:"email" form:"email" example:"johndoe@example.com"`
+	Username string `json:"username" form:"username" example:"johndoe"`
+	Password string `json:"password,omitempty" form:"password" example:"secret"`
+	Age      uint   `json:"age" form:"age" example:"8"`
+}
+
+// Represents for registered use
+type RegisteredUser struct {
+	ID       string `json:"id" example:"the user id generated here"`
+	Email    string `json:"email" example:"johndoe@example.com"`
+	Username string `json:"username" example:"johndoe"`
+	Age      uint   `json:"age" example:"8"`
+}
+
+// Reprensents for response success register user
+type ResponseRegisteredUser struct {
+	Status string         `json:"status" example:"success"`
+	Data   RegisteredUser `json:"data"`
+}
+
+// Represents for login user
+type LoginUser struct {
+	Email    string `json:"email" form:"email" example:"johndoe@example.com"`
+	Password string `json:"password,omitempty" form:"password" example:"secret"`
+}
+
+// Represents for loggedin user
+type LoggedInUser struct {
+	Token string `json:"token" example:"the token generated here"`
+}
+
+// Represents for response loggedin user
+type ResponseLoggedInUser struct {
+	Status string       `json:"status" example:"success"`
+	Data   LoggedInUser `json:"data"`
+}
+
+// Represents for update user
+type UpdateUser struct {
+	Email    string `json:"email" example:"newjohndoe@example.com"`
+	Username string `json:"username" example:"newjohndoe"`
+	Age      uint   `json:"age" example:"8"`
+}
+
+// Represents for updated user
+type UpdatedUser struct {
+	ID        string     `json:"id" example:"here is the generated user id"`
+	Email     string     `json:"email" example:"newjohndoe@example.com"`
+	Username  string     `json:"username" example:"newjohndoe"`
+	Age       uint       `json:"age" example:"8"`
+	UpdatedAt *time.Time `json:"updated_at" example:"the updated at generated here"`
+}
+
+// Represents for response updated user
+type ResponseUpdatedUser struct {
+	Status string      `json:"status" example:"success"`
+	Data   UpdatedUser `json:"data"`
+}
+
+// Represents for response deleted user
+type ResponseMessageDeletedUser struct {
+	Status  string `json:"status" example:"success"`
+	Message string `json:"message" example:"your account has been successfully deleted"`
 }

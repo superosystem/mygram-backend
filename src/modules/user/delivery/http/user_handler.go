@@ -9,7 +9,6 @@ import (
 	"github.com/gusrylmubarok/mygram-backend/src/domain"
 	"github.com/gusrylmubarok/mygram-backend/src/helpers"
 	"github.com/gusrylmubarok/mygram-backend/src/middleware"
-	"github.com/gusrylmubarok/mygram-backend/src/modules/user/model"
 )
 
 type userHandler struct {
@@ -19,7 +18,7 @@ type userHandler struct {
 func NewUserHandler(routers *gin.Engine, userUseCase domain.UserUseCase) {
 	handler := &userHandler{userUseCase}
 
-	router := routers.Group("/api/v1/users")
+	router := routers.Group("/api/v1/user")
 	{
 		router.POST("/register", handler.Register)
 		router.POST("/login", handler.Login)
@@ -31,45 +30,43 @@ func NewUserHandler(routers *gin.Engine, userUseCase domain.UserUseCase) {
 // Register godoc
 // @Summary			Register a user
 // @Description		create and store a user
-// @Tags			users
+// @Tags			user
 // @Accept			json
 // @Produce			json
-// @Param			json	body			model.RegisterUser	true	"Register User"
-// @Success			201		{object}		model.ResponseDataRegisteredUser
+// @Param			json	body			domain.RegisterUser true "Register User"
+// @Success			201		{object}		domain.ResponseRegisteredUser
 // @Failure			400  	{object}		helpers.ResponseMessage
 // @Failure			409  	{object}		helpers.ResponseMessage
-// @Router			/users/register	[post]
+// @Router			/user/register	[post]
 func (handler *userHandler) Register(ctx *gin.Context) {
 	var (
-		user domain.User
-		err  error
+		registerUser domain.RegisterUser
+		user         domain.User
+		err          error
 	)
 
-	if err = ctx.ShouldBindJSON(&user); err != nil {
+	if err = ctx.ShouldBindJSON(&registerUser); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: err.Error(),
 		})
-
 		return
 	}
 
-	if err = handler.userUseCase.Register(ctx.Request.Context(), &user); err != nil {
+	if user, err = handler.userUseCase.Register(ctx.Request.Context(), &registerUser); err != nil {
 		if strings.Contains(err.Error(), "idx_users_username") {
 			ctx.AbortWithStatusJSON(http.StatusConflict, helpers.ResponseMessage{
 				Status:  "fail",
 				Message: "the username you entered has been used",
 			})
-
 			return
 		}
 
-		if strings.Contains(err.Error(), "idx_users_email") {
+		if strings.Contains(err.Error(), "idx_user_email") {
 			ctx.AbortWithStatusJSON(http.StatusConflict, helpers.ResponseMessage{
 				Status:  "fail",
 				Message: "the email you entered has been used",
 			})
-
 			return
 		}
 
@@ -77,17 +74,16 @@ func (handler *userHandler) Register(ctx *gin.Context) {
 			Status:  "fail",
 			Message: err.Error(),
 		})
-
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, helpers.ResponseData{
+	ctx.JSON(http.StatusCreated, domain.ResponseRegisteredUser{
 		Status: "success",
-		Data: model.RegisteredUser{
-			Age:      user.Age,
-			Email:    user.Email,
+		Data: domain.RegisteredUser{
 			ID:       user.ID,
 			Username: user.Username,
+			Email:    user.Email,
+			Age:      user.Age,
 		},
 	})
 }
@@ -95,22 +91,23 @@ func (handler *userHandler) Register(ctx *gin.Context) {
 // Login godoc
 // @Summary			Login a user
 // @Description		Authentication a user and retrieve a token
-// @Tags			users
+// @Tags			user
 // @Accept			json
 // @Produce			json
-// @Param			json	body			model.LoginUser	true	"Login User"
-// @Success			200		{object}		model.ResponseDataLoggedinUser
+// @Param			json	body			domain.LoginUser	true	"Login User"
+// @Success			200		{object}		domain.ResponseLoggedInUser
 // @Failure			400		{object}		helpers.ResponseMessage
 // @Failure			401		{object}		helpers.ResponseMessage
-// @Router			/users/login		[post]
+// @Router			/user/login		[post]
 func (handler *userHandler) Login(ctx *gin.Context) {
 	var (
-		user  domain.User
-		err   error
-		token string
+		loginUser domain.LoginUser
+		user      domain.User
+		err       error
+		token     string
 	)
 
-	if err = ctx.ShouldBindJSON(&user); err != nil {
+	if err = ctx.ShouldBindJSON(&loginUser); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: err.Error(),
@@ -119,7 +116,7 @@ func (handler *userHandler) Login(ctx *gin.Context) {
 		return
 	}
 
-	if err = handler.userUseCase.Login(ctx.Request.Context(), &user); err != nil {
+	if user, err = handler.userUseCase.Login(ctx.Request.Context(), &loginUser); err != nil {
 		if strings.Contains(err.Error(), "the credential you entered are wrong") {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 				Status:  "unauthenticated",
@@ -146,9 +143,9 @@ func (handler *userHandler) Login(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, helpers.ResponseData{
+	ctx.JSON(http.StatusOK, domain.ResponseLoggedInUser{
 		Status: "success",
-		Data: model.LoggedinUser{
+		Data: domain.LoggedInUser{
 			Token: token,
 		},
 	})
@@ -157,16 +154,16 @@ func (handler *userHandler) Login(ctx *gin.Context) {
 // Update godoc
 // @Summary			Update a user
 // @Description		Update a user with authentication user
-// @Tags			users
+// @Tags			user
 // @Accept			json
 // @Produce			json
-// @Param			json		body			model.UpdateUser   true  "Update User"
-// @Success			200			{object}  		model.ResponseDataUpdatedUser
+// @Param			json		body			domain.UpdateUser   true  "Update User"
+// @Success			200			{object}  		domain.ResponseUpdatedUser
 // @Failure			400			{object}		helpers.ResponseMessage
 // @Failure			401			{object}		helpers.ResponseMessage
 // @Failure			409			{object}		helpers.ResponseMessage
 // @Security		Bearer
-// @Router			/users	[put]
+// @Router			/user	[put]
 func (handler *userHandler) Update(ctx *gin.Context) {
 	var (
 		user domain.User
@@ -201,7 +198,7 @@ func (handler *userHandler) Update(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, helpers.ResponseData{
 		Status: "success",
-		Data: model.UpdatedUser{
+		Data: domain.UpdatedUser{
 			ID:        user.ID,
 			Email:     user.Email,
 			Username:  user.Username,
@@ -214,15 +211,15 @@ func (handler *userHandler) Update(ctx *gin.Context) {
 // Delete godoc
 // @Summary			Delete a user
 // @Description		Delete a user with authentication user
-// @Tags			users
+// @Tags			user
 // @Accept			json
 // @Produce			json
-// @Success			200			{object}	model.ResponseMessageDeletedUser
+// @Success			200			{object}	domain.ResponseMessageDeletedUser
 // @Failure			400			{object}	helpers.ResponseMessage
 // @Failure			401			{object}	helpers.ResponseMessage
 // @Failure			404			{object}	helpers.ResponseMessage
 // @Security		Bearer
-// @Router			/users	[delete]
+// @Router			/user	[delete]
 func (handler *userHandler) Delete(ctx *gin.Context) {
 	userData := ctx.MustGet("userData").(jwt.MapClaims)
 	userID := string(userData["id"].(string))

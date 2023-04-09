@@ -634,7 +634,7 @@
                 }
             }
         },
-        "/users": {
+        "/user": {
             "put": {
                 "security": [
                     {
@@ -649,7 +649,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "user"
                 ],
                 "summary": "Update a user",
                 "parameters": [
@@ -659,7 +659,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UpdateUser"
+                            "$ref": "#/definitions/domain.UpdateUser"
                         }
                     }
                 ],
@@ -667,7 +667,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseDataUpdatedUser"
+                            "$ref": "#/definitions/domain.ResponseUpdatedUser"
                         }
                     },
                     "400": {
@@ -704,14 +704,14 @@
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "user"
                 ],
                 "summary": "Delete a user",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseMessageDeletedUser"
+                            "$ref": "#/definitions/domain.ResponseMessageDeletedUser"
                         }
                     },
                     "400": {
@@ -735,7 +735,7 @@
                 }
             }
         },
-        "/users/login": {
+        "/user/login": {
             "post": {
                 "description": "Authentication a user and retrieve a token",
                 "consumes": [
@@ -745,7 +745,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "user"
                 ],
                 "summary": "Login a user",
                 "parameters": [
@@ -755,7 +755,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.LoginUser"
+                            "$ref": "#/definitions/domain.LoginUser"
                         }
                     }
                 ],
@@ -763,7 +763,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseDataLoggedinUser"
+                            "$ref": "#/definitions/domain.ResponseLoggedInUser"
                         }
                     },
                     "400": {
@@ -781,7 +781,7 @@
                 }
             }
         },
-        "/users/register": {
+        "/user/register": {
             "post": {
                 "description": "create and store a user",
                 "consumes": [
@@ -791,7 +791,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "user"
                 ],
                 "summary": "Register a user",
                 "parameters": [
@@ -801,7 +801,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.RegisterUser"
+                            "$ref": "#/definitions/domain.RegisterUser"
                         }
                     }
                 ],
@@ -809,7 +809,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseDataRegisteredUser"
+                            "$ref": "#/definitions/domain.ResponseRegisteredUser"
                         }
                     },
                     "400": {
@@ -829,6 +829,161 @@
         }
     },
     "definitions": {
+        "domain.LoggedInUser": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "example": "the token generated here"
+                }
+            }
+        },
+        "domain.LoginUser": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "johndoe@example.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "secret"
+                }
+            }
+        },
+        "domain.RegisterUser": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer",
+                    "example": 8
+                },
+                "email": {
+                    "type": "string",
+                    "example": "johndoe@example.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "secret"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "johndoe"
+                }
+            }
+        },
+        "domain.RegisteredUser": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer",
+                    "example": 8
+                },
+                "email": {
+                    "type": "string",
+                    "example": "johndoe@example.com"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "the user id generated here"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "johndoe"
+                }
+            }
+        },
+        "domain.ResponseLoggedInUser": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.LoggedInUser"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.ResponseMessageDeletedUser": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "your account has been successfully deleted"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.ResponseRegisteredUser": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.RegisteredUser"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.ResponseUpdatedUser": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.UpdatedUser"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.UpdateUser": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer",
+                    "example": 8
+                },
+                "email": {
+                    "type": "string",
+                    "example": "newjohndoe@example.com"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "newjohndoe"
+                }
+            }
+        },
+        "domain.UpdatedUser": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer",
+                    "example": 8
+                },
+                "email": {
+                    "type": "string",
+                    "example": "newjohndoe@example.com"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "here is the generated user id"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "the updated at generated here"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "newjohndoe"
+                }
+            }
+        },
         "helpers.ResponseMessage": {
             "type": "object",
             "properties": {
@@ -1014,28 +1169,6 @@
                 }
             }
         },
-        "model.LoggedinUser": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string",
-                    "example": "the token generated here"
-                }
-            }
-        },
-        "model.LoginUser": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "johndoe@example.com"
-                },
-                "password": {
-                    "type": "string",
-                    "example": "secret"
-                }
-            }
-        },
         "model.Photo": {
             "type": "object",
             "properties": {
@@ -1053,48 +1186,6 @@
                 },
                 "user_id": {
                     "type": "string"
-                }
-            }
-        },
-        "model.RegisterUser": {
-            "type": "object",
-            "properties": {
-                "age": {
-                    "type": "integer",
-                    "example": 8
-                },
-                "email": {
-                    "type": "string",
-                    "example": "johndoe@example.com"
-                },
-                "password": {
-                    "type": "string",
-                    "example": "secret"
-                },
-                "username": {
-                    "type": "string",
-                    "example": "johndoe"
-                }
-            }
-        },
-        "model.RegisteredUser": {
-            "type": "object",
-            "properties": {
-                "age": {
-                    "type": "integer",
-                    "example": 8
-                },
-                "email": {
-                    "type": "string",
-                    "example": "johndoe@example.com"
-                },
-                "id": {
-                    "type": "string",
-                    "example": "the user id generated here"
-                },
-                "username": {
-                    "type": "string",
-                    "example": "johndoe"
                 }
             }
         },
@@ -1176,30 +1267,6 @@
                 }
             }
         },
-        "model.ResponseDataLoggedinUser": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/model.LoggedinUser"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "model.ResponseDataRegisteredUser": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/model.RegisteredUser"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
         "model.ResponseDataUpdatedComment": {
             "type": "object",
             "properties": {
@@ -1229,18 +1296,6 @@
             "properties": {
                 "data": {
                     "$ref": "#/definitions/model.UpdatedSocialMedia"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "model.ResponseDataUpdatedUser": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/model.UpdatedUser"
                 },
                 "status": {
                     "type": "string",
@@ -1280,19 +1335,6 @@
                 "message": {
                     "type": "string",
                     "example": "your social media has been successfully deleted"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "model.ResponseMessageDeletedUser": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "your account has been successfully deleted"
                 },
                 "status": {
                     "type": "string",
@@ -1382,19 +1424,6 @@
                 }
             }
         },
-        "model.UpdateUser": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "newjohndoe@example.com"
-                },
-                "username": {
-                    "type": "string",
-                    "example": "newjohndoe"
-                }
-            }
-        },
         "model.UpdatedComment": {
             "type": "object",
             "properties": {
@@ -1463,31 +1492,6 @@
                 "user_id": {
                     "type": "string",
                     "example": "here is the generated user id"
-                }
-            }
-        },
-        "model.UpdatedUser": {
-            "type": "object",
-            "properties": {
-                "age": {
-                    "type": "integer",
-                    "example": 8
-                },
-                "email": {
-                    "type": "string",
-                    "example": "newjohndoe@example.com"
-                },
-                "id": {
-                    "type": "string",
-                    "example": "here is the generated user id"
-                },
-                "updated_at": {
-                    "type": "string",
-                    "example": "the updated at generated here"
-                },
-                "username": {
-                    "type": "string",
-                    "example": "newjohndoe"
                 }
             }
         },
