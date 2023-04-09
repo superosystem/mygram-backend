@@ -23,7 +23,7 @@ func NewUserHandler(routers *gin.Engine, userUseCase domain.UserUseCase) {
 		router.POST("/register", handler.Register)
 		router.POST("/login", handler.Login)
 		router.PUT("", middleware.Authentication(), handler.Update)
-		router.DELETE("", middleware.Authentication(), handler.Delete)
+		router.DELETE("", middleware.Authentication(), handler.DeleteById)
 	}
 }
 
@@ -208,7 +208,7 @@ func (handler *userHandler) Update(ctx *gin.Context) {
 	})
 }
 
-// Delete godoc
+// Delete By Idgodoc
 // @Summary			Delete a user
 // @Description		Delete a user with authentication user
 // @Tags			user
@@ -220,11 +220,11 @@ func (handler *userHandler) Update(ctx *gin.Context) {
 // @Failure			404			{object}	helpers.ResponseMessage
 // @Security		Bearer
 // @Router			/user	[delete]
-func (handler *userHandler) Delete(ctx *gin.Context) {
+func (handler *userHandler) DeleteById(ctx *gin.Context) {
 	userData := ctx.MustGet("userData").(jwt.MapClaims)
 	userID := string(userData["id"].(string))
 
-	if err := handler.userUseCase.Delete(ctx, userID); err != nil {
+	if err := handler.userUseCase.DeleteById(ctx, userID); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: "account not found",

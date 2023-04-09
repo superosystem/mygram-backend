@@ -52,7 +52,7 @@ func AuthorizationPhoto(photoUseCase domain.PhotoUseCase) gin.HandlerFunc {
 		userData := ctx.MustGet("userData").(jwt.MapClaims)
 		userID := string(userData["id"].(string))
 
-		if err = photoUseCase.GetByID(ctx.Request.Context(), &photo, photoID); err != nil {
+		if err = photoUseCase.FindById(ctx.Request.Context(), &photo, photoID); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, helpers.ResponseMessage{
 				Status:  "fail",
 				Message: fmt.Sprintf("photo with id %s doesn't exist", photoID),

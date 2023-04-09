@@ -229,14 +229,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/photos": {
+        "/photo": {
             "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "Get all photos with authentication user",
+                "description": "Get all photos",
                 "consumes": [
                     "application/json"
                 ],
@@ -244,14 +239,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "photos"
+                    "photo"
                 ],
-                "summary": "Fetch all photos",
+                "summary": "Get all photos",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseDataFetchedPhoto"
+                            "$ref": "#/definitions/domain.ResponseGetAllPhotos"
                         }
                     },
                     "400": {
@@ -282,7 +277,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "photos"
+                    "photo"
                 ],
                 "summary": "Store a photo",
                 "parameters": [
@@ -292,7 +287,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.AddPhoto"
+                            "$ref": "#/definitions/domain.AddPhoto"
                         }
                     }
                 ],
@@ -300,7 +295,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseDataAddedPhoto"
+                            "$ref": "#/definitions/domain.ResponseAddedPhoto"
                         }
                     },
                     "400": {
@@ -318,7 +313,45 @@ const docTemplate = `{
                 }
             }
         },
-        "/photos/{id}": {
+        "/photo/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get one photo with authentication user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "photo"
+                ],
+                "summary": "Get one photo",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ResponseGetByIdPhoto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    }
+                }
+            },
             "put": {
                 "security": [
                     {
@@ -333,7 +366,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "photos"
+                    "photo"
                 ],
                 "summary": "Update a photo",
                 "parameters": [
@@ -350,7 +383,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UpdatePhoto"
+                            "$ref": "#/definitions/domain.UpdatePhoto"
                         }
                     }
                 ],
@@ -358,7 +391,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseDataUpdatedPhoto"
+                            "$ref": "#/definitions/domain.ResponseUpdatedPhoto"
                         }
                     },
                     "400": {
@@ -395,7 +428,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "photos"
+                    "photo"
                 ],
                 "summary": "Delete a photo",
                 "parameters": [
@@ -411,7 +444,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseMessageDeletedPhoto"
+                            "$ref": "#/definitions/domain.ResponseDeletedPhoto"
                         }
                     },
                     "400": {
@@ -836,6 +869,76 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.AddPhoto": {
+            "type": "object",
+            "properties": {
+                "caption": {
+                    "type": "string",
+                    "example": "A caption"
+                },
+                "photo_url": {
+                    "type": "string",
+                    "example": "https://www.example.com/image.jpg"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "A Photo Title"
+                }
+            }
+        },
+        "domain.AddedPhoto": {
+            "type": "object",
+            "properties": {
+                "caption": {
+                    "type": "string",
+                    "example": "A caption"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "create time should be here"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "photo_url": {
+                    "type": "string",
+                    "example": "https://www.example.com/image.jpg"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "A Photo Title"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.GetPhoto": {
+            "type": "object",
+            "properties": {
+                "caption": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "photo_url": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.LoggedInUser": {
             "type": "object",
             "properties": {
@@ -900,6 +1003,58 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.ResponseAddedPhoto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.AddedPhoto"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.ResponseDeletedPhoto": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "your account has been successfully deleted"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.ResponseGetAllPhotos": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.GetPhoto"
+                    }
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.ResponseGetByIdPhoto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.GetPhoto"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
         "domain.ResponseLoggedInUser": {
             "type": "object",
             "properties": {
@@ -937,6 +1092,18 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.ResponseUpdatedPhoto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.UpdatedPhoto"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
         "domain.ResponseUpdatedUser": {
             "type": "object",
             "properties": {
@@ -946,6 +1113,26 @@ const docTemplate = `{
                 "status": {
                     "type": "string",
                     "example": "success"
+                }
+            }
+        },
+        "domain.UpdatePhoto": {
+            "type": "object",
+            "properties": {
+                "caption": {
+                    "type": "string",
+                    "example": "A new caption"
+                },
+                "photo_url": {
+                    "type": "string",
+                    "example": "https://www.example.com/new-image.jpg"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "A new title"
+                },
+                "userID": {
+                    "type": "string"
                 }
             }
         },
@@ -966,12 +1153,39 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.UpdatedPhoto": {
+            "type": "object",
+            "properties": {
+                "caption": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "photo_url": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.UpdatedUser": {
             "type": "object",
             "properties": {
                 "age": {
                     "type": "integer",
                     "example": 8
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "create time should be here"
                 },
                 "email": {
                     "type": "string",
@@ -983,7 +1197,7 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string",
-                    "example": "the updated at generated here"
+                    "example": "update time should be here"
                 },
                 "username": {
                     "type": "string",
@@ -1012,23 +1226,6 @@ const docTemplate = `{
                 "photo_id": {
                     "type": "string",
                     "example": "photo-123"
-                }
-            }
-        },
-        "model.AddPhoto": {
-            "type": "object",
-            "properties": {
-                "caption": {
-                    "type": "string",
-                    "example": "A caption"
-                },
-                "photo_url": {
-                    "type": "string",
-                    "example": "https://www.example.com/image.jpg"
-                },
-                "title": {
-                    "type": "string",
-                    "example": "A Title"
                 }
             }
         },
@@ -1067,29 +1264,6 @@ const docTemplate = `{
                 "user_id": {
                     "type": "string",
                     "example": "here is the generated user id"
-                }
-            }
-        },
-        "model.AddedPhoto": {
-            "type": "object",
-            "properties": {
-                "caption": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "photo_url": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
                 }
             }
         },
@@ -1147,35 +1321,6 @@ const docTemplate = `{
                 }
             }
         },
-        "model.FetchedPhoto": {
-            "type": "object",
-            "properties": {
-                "caption": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "photo_url": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/src_modules_photo_model.User"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
         "model.Photo": {
             "type": "object",
             "properties": {
@@ -1201,18 +1346,6 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/model.AddedComment"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "model.ResponseDataAddedPhoto": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/model.AddedPhoto"
                 },
                 "status": {
                     "type": "string",
@@ -1247,21 +1380,6 @@ const docTemplate = `{
                 }
             }
         },
-        "model.ResponseDataFetchedPhoto": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.FetchedPhoto"
-                    }
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
         "model.ResponseDataFetchedSocialMedia": {
             "type": "object",
             "properties": {
@@ -1279,18 +1397,6 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/model.UpdatedComment"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "model.ResponseDataUpdatedPhoto": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/model.UpdatedPhoto"
                 },
                 "status": {
                     "type": "string",
@@ -1316,19 +1422,6 @@ const docTemplate = `{
                 "message": {
                     "type": "string",
                     "example": "your comment has been successfully deleted"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "model.ResponseMessageDeletedPhoto": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "your photo has been successfully deleted"
                 },
                 "status": {
                     "type": "string",
@@ -1401,23 +1494,6 @@ const docTemplate = `{
                 }
             }
         },
-        "model.UpdatePhoto": {
-            "type": "object",
-            "properties": {
-                "caption": {
-                    "type": "string",
-                    "example": "A new caption"
-                },
-                "photo_url": {
-                    "type": "string",
-                    "example": "https://www.example.com/new-image.jpg"
-                },
-                "title": {
-                    "type": "string",
-                    "example": "A new title"
-                }
-            }
-        },
         "model.UpdateSocialMedia": {
             "type": "object",
             "properties": {
@@ -1432,29 +1508,6 @@ const docTemplate = `{
             }
         },
         "model.UpdatedComment": {
-            "type": "object",
-            "properties": {
-                "caption": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "photo_url": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.UpdatedPhoto": {
             "type": "object",
             "properties": {
                 "caption": {
@@ -1509,17 +1562,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "src_modules_photo_model.User": {
-            "type": "object",
-            "properties": {
-                "email": {
                     "type": "string"
                 },
                 "username": {

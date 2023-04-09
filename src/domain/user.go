@@ -44,14 +44,14 @@ type UserUseCase interface {
 	Register(context.Context, *RegisterUser) (User, error)
 	Login(context.Context, *LoginUser) (User, error)
 	Update(context.Context, User) (User, error)
-	Delete(context.Context, string) error
+	DeleteById(context.Context, string) error
 }
 
 type UserRepository interface {
 	Register(context.Context, *User) error
 	Login(context.Context, *User) error
 	Update(context.Context, User) (User, error)
-	Delete(context.Context, string) error
+	DeleteById(context.Context, string) error
 }
 
 // Represents for register user
@@ -106,7 +106,8 @@ type UpdatedUser struct {
 	Email     string     `json:"email" example:"newjohndoe@example.com"`
 	Username  string     `json:"username" example:"newjohndoe"`
 	Age       uint       `json:"age" example:"8"`
-	UpdatedAt *time.Time `json:"updated_at" example:"the updated at generated here"`
+	CreatedAt *time.Time `json:"created_at" example:"create time should be here"`
+	UpdatedAt *time.Time `json:"updated_at" example:"update time should be here"`
 }
 
 // Represents for response updated user

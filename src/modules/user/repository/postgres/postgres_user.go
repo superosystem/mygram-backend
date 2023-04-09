@@ -39,9 +39,7 @@ func (userRepository *userRepository) Register(ctx context.Context, user *domain
 
 func (userRepository *userRepository) Login(ctx context.Context, user *domain.User) (err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-
 	defer cancel()
-
 	password := user.Password
 
 	if err = userRepository.db.WithContext(ctx).Where("email = ?", user.Email).Take(&user).Error; err != nil {
@@ -57,7 +55,6 @@ func (userRepository *userRepository) Login(ctx context.Context, user *domain.Us
 
 func (userRepository *userRepository) Update(ctx context.Context, user domain.User) (u domain.User, err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-
 	defer cancel()
 
 	u = domain.User{}
@@ -73,7 +70,7 @@ func (userRepository *userRepository) Update(ctx context.Context, user domain.Us
 	return u, nil
 }
 
-func (userRepository *userRepository) Delete(ctx context.Context, id string) (err error) {
+func (userRepository *userRepository) DeleteById(ctx context.Context, id string) (err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 
 	defer cancel()

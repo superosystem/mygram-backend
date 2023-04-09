@@ -14,24 +14,8 @@ func NewPhotoUseCase(photoRepository domain.PhotoRepository) *photoUseCase {
 	return &photoUseCase{photoRepository}
 }
 
-func (photoUseCase *photoUseCase) Fetch(ctx context.Context, photos *[]domain.Photo) (err error) {
-	if err = photoUseCase.photoRepository.Fetch(ctx, photos); err != nil {
-		return err
-	}
-
-	return
-}
-
-func (photoUseCase *photoUseCase) Store(ctx context.Context, photo *domain.Photo) (err error) {
-	if err = photoUseCase.photoRepository.Store(ctx, photo); err != nil {
-		return err
-	}
-
-	return
-}
-
-func (photoUseCase *photoUseCase) GetByID(ctx context.Context, photo *domain.Photo, id string) (err error) {
-	if err = photoUseCase.photoRepository.GetByID(ctx, photo, id); err != nil {
+func (photoUseCase *photoUseCase) Save(ctx context.Context, photo *domain.Photo) (err error) {
+	if err = photoUseCase.photoRepository.Save(ctx, photo); err != nil {
 		return err
 	}
 
@@ -46,8 +30,24 @@ func (photoUseCase *photoUseCase) Update(ctx context.Context, photo domain.Photo
 	return p, nil
 }
 
-func (photoUseCase *photoUseCase) Delete(ctx context.Context, id string) (err error) {
-	if err = photoUseCase.photoRepository.Delete(ctx, id); err != nil {
+func (photoUseCase *photoUseCase) DeleteById(ctx context.Context, id string) (err error) {
+	if err = photoUseCase.photoRepository.DeleteById(ctx, id); err != nil {
+		return err
+	}
+
+	return
+}
+
+func (photoUseCase *photoUseCase) FindAll(ctx context.Context, photos *[]domain.Photo) (err error) {
+	if err = photoUseCase.photoRepository.FindAll(ctx, photos); err != nil {
+		return err
+	}
+
+	return
+}
+
+func (photoUseCase *photoUseCase) FindById(ctx context.Context, photo *domain.Photo, id string) (err error) {
+	if err = photoUseCase.photoRepository.FindById(ctx, photo, id); err != nil {
 		return err
 	}
 

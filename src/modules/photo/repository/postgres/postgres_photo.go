@@ -19,23 +19,8 @@ func NewPhotoRepository(db *gorm.DB) *photoRepository {
 	return &photoRepository{db}
 }
 
-func (photoRepository *photoRepository) Fetch(ctx context.Context, photos *[]domain.Photo) (err error) {
+func (photoRepository *photoRepository) Save(ctx context.Context, photo *domain.Photo) (err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-
-	defer cancel()
-
-	if err = photoRepository.db.WithContext(ctx).Preload("User", func(db *gorm.DB) *gorm.DB {
-		return db.Select("id", "username", "email")
-	}).Find(&photos).Error; err != nil {
-		return err
-	}
-
-	return
-}
-
-func (photoRepository *photoRepository) Store(ctx context.Context, photo *domain.Photo) (err error) {
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-
 	defer cancel()
 
 	ID, _ := gonanoid.New(16)
@@ -49,21 +34,8 @@ func (photoRepository *photoRepository) Store(ctx context.Context, photo *domain
 	return
 }
 
-func (photoRepository *photoRepository) GetByID(ctx context.Context, photo *domain.Photo, id string) (err error) {
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-
-	defer cancel()
-
-	if err = photoRepository.db.WithContext(ctx).First(&photo, &id).Error; err != nil {
-		return err
-	}
-
-	return
-}
-
 func (photoRepository *photoRepository) Update(ctx context.Context, photo domain.Photo, id string) (p domain.Photo, err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-
 	defer cancel()
 
 	p = domain.Photo{}
@@ -79,9 +51,8 @@ func (photoRepository *photoRepository) Update(ctx context.Context, photo domain
 	return p, nil
 }
 
-func (photoRepository *photoRepository) Delete(ctx context.Context, id string) (err error) {
+func (photoRepository *photoRepository) DeleteById(ctx context.Context, id string) (err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-
 	defer cancel()
 
 	if err = photoRepository.db.WithContext(ctx).First(&domain.Photo{}, &id).Error; err != nil {
@@ -94,3 +65,31 @@ func (photoRepository *photoRepository) Delete(ctx context.Context, id string) (
 
 	return
 }
+
+func (photoRepository *photoRepository) FindAll(ctx context.Context, photos *[]domain.Photo) (err error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+
+	defer cancel()
+
+	if err = photoRepository.db.WithContext(ctx).Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "username", "email")
+	}).Find(&photos).Error; err != nil {
+		return err
+	}
+
+	return
+}
+
+func (photoRepository *photoRepository) FindById(ctx context.Context, photo *domain.Photo, id string) (err error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+
+	defer cancel()
+
+	if err = photoRepository.db.WithContext(ctx).First(&photo, &id).Error; err != nil {
+		return err
+	}
+
+	return
+}
+
+

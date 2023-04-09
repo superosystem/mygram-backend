@@ -1,5 +1,53 @@
 basePath: /
 definitions:
+  domain.AddPhoto:
+    properties:
+      caption:
+        example: A caption
+        type: string
+      photo_url:
+        example: https://www.example.com/image.jpg
+        type: string
+      title:
+        example: A Photo Title
+        type: string
+    type: object
+  domain.AddedPhoto:
+    properties:
+      caption:
+        example: A caption
+        type: string
+      created_at:
+        example: create time should be here
+        type: string
+      id:
+        type: string
+      photo_url:
+        example: https://www.example.com/image.jpg
+        type: string
+      title:
+        example: A Photo Title
+        type: string
+      user_id:
+        type: string
+    type: object
+  domain.GetPhoto:
+    properties:
+      caption:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      photo_url:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
   domain.LoggedInUser:
     properties:
       token:
@@ -45,6 +93,41 @@ definitions:
         example: johndoe
         type: string
     type: object
+  domain.ResponseAddedPhoto:
+    properties:
+      data:
+        $ref: '#/definitions/domain.AddedPhoto'
+      status:
+        example: success
+        type: string
+    type: object
+  domain.ResponseDeletedPhoto:
+    properties:
+      message:
+        example: your account has been successfully deleted
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  domain.ResponseGetAllPhotos:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/domain.GetPhoto'
+        type: array
+      status:
+        example: success
+        type: string
+    type: object
+  domain.ResponseGetByIdPhoto:
+    properties:
+      data:
+        $ref: '#/definitions/domain.GetPhoto'
+      status:
+        example: success
+        type: string
+    type: object
   domain.ResponseLoggedInUser:
     properties:
       data:
@@ -70,12 +153,34 @@ definitions:
         example: success
         type: string
     type: object
+  domain.ResponseUpdatedPhoto:
+    properties:
+      data:
+        $ref: '#/definitions/domain.UpdatedPhoto'
+      status:
+        example: success
+        type: string
+    type: object
   domain.ResponseUpdatedUser:
     properties:
       data:
         $ref: '#/definitions/domain.UpdatedUser'
       status:
         example: success
+        type: string
+    type: object
+  domain.UpdatePhoto:
+    properties:
+      caption:
+        example: A new caption
+        type: string
+      photo_url:
+        example: https://www.example.com/new-image.jpg
+        type: string
+      title:
+        example: A new title
+        type: string
+      userID:
         type: string
     type: object
   domain.UpdateUser:
@@ -90,11 +195,29 @@ definitions:
         example: newjohndoe
         type: string
     type: object
+  domain.UpdatedPhoto:
+    properties:
+      caption:
+        type: string
+      id:
+        type: string
+      photo_url:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
   domain.UpdatedUser:
     properties:
       age:
         example: 8
         type: integer
+      created_at:
+        example: create time should be here
+        type: string
       email:
         example: newjohndoe@example.com
         type: string
@@ -102,7 +225,7 @@ definitions:
         example: here is the generated user id
         type: string
       updated_at:
-        example: the updated at generated here
+        example: update time should be here
         type: string
       username:
         example: newjohndoe
@@ -122,18 +245,6 @@ definitions:
         type: string
       photo_id:
         example: photo-123
-        type: string
-    type: object
-  model.AddPhoto:
-    properties:
-      caption:
-        example: A caption
-        type: string
-      photo_url:
-        example: https://www.example.com/image.jpg
-        type: string
-      title:
-        example: A Title
         type: string
     type: object
   model.AddSocialMedia:
@@ -161,21 +272,6 @@ definitions:
         type: string
       user_id:
         example: here is the generated user id
-        type: string
-    type: object
-  model.AddedPhoto:
-    properties:
-      caption:
-        type: string
-      created_at:
-        type: string
-      id:
-        type: string
-      photo_url:
-        type: string
-      title:
-        type: string
-      user_id:
         type: string
     type: object
   model.AddedSocialMedia:
@@ -215,25 +311,6 @@ definitions:
       user_id:
         type: string
     type: object
-  model.FetchedPhoto:
-    properties:
-      caption:
-        type: string
-      created_at:
-        type: string
-      id:
-        type: string
-      photo_url:
-        type: string
-      title:
-        type: string
-      updated_at:
-        type: string
-      user:
-        $ref: '#/definitions/src_modules_photo_model.User'
-      user_id:
-        type: string
-    type: object
   model.Photo:
     properties:
       caption:
@@ -251,14 +328,6 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/model.AddedComment'
-      status:
-        example: success
-        type: string
-    type: object
-  model.ResponseDataAddedPhoto:
-    properties:
-      data:
-        $ref: '#/definitions/model.AddedPhoto'
       status:
         example: success
         type: string
@@ -281,16 +350,6 @@ definitions:
         example: success
         type: string
     type: object
-  model.ResponseDataFetchedPhoto:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/model.FetchedPhoto'
-        type: array
-      status:
-        example: success
-        type: string
-    type: object
   model.ResponseDataFetchedSocialMedia:
     properties:
       data:
@@ -307,14 +366,6 @@ definitions:
         example: success
         type: string
     type: object
-  model.ResponseDataUpdatedPhoto:
-    properties:
-      data:
-        $ref: '#/definitions/model.UpdatedPhoto'
-      status:
-        example: success
-        type: string
-    type: object
   model.ResponseDataUpdatedSocialMedia:
     properties:
       data:
@@ -327,15 +378,6 @@ definitions:
     properties:
       message:
         example: your comment has been successfully deleted
-        type: string
-      status:
-        example: success
-        type: string
-    type: object
-  model.ResponseMessageDeletedPhoto:
-    properties:
-      message:
-        example: your photo has been successfully deleted
         type: string
       status:
         example: success
@@ -386,18 +428,6 @@ definitions:
         example: A new comment
         type: string
     type: object
-  model.UpdatePhoto:
-    properties:
-      caption:
-        example: A new caption
-        type: string
-      photo_url:
-        example: https://www.example.com/new-image.jpg
-        type: string
-      title:
-        example: A new title
-        type: string
-    type: object
   model.UpdateSocialMedia:
     properties:
       name:
@@ -408,21 +438,6 @@ definitions:
         type: string
     type: object
   model.UpdatedComment:
-    properties:
-      caption:
-        type: string
-      id:
-        type: string
-      photo_url:
-        type: string
-      title:
-        type: string
-      updated_at:
-        type: string
-      user_id:
-        type: string
-    type: object
-  model.UpdatedPhoto:
     properties:
       caption:
         type: string
@@ -460,13 +475,6 @@ definitions:
       email:
         type: string
       id:
-        type: string
-      username:
-        type: string
-    type: object
-  src_modules_photo_model.User:
-    properties:
-      email:
         type: string
       username:
         type: string
@@ -628,18 +636,18 @@ paths:
       summary: Update a comment
       tags:
       - comments
-  /photos:
+  /photo:
     get:
       consumes:
       - application/json
-      description: Get all photos with authentication user
+      description: Get all photos
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.ResponseDataFetchedPhoto'
+            $ref: '#/definitions/domain.ResponseGetAllPhotos'
         "400":
           description: Bad Request
           schema:
@@ -648,11 +656,9 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/helpers.ResponseMessage'
-      security:
-      - Bearer: []
-      summary: Fetch all photos
+      summary: Get all photos
       tags:
-      - photos
+      - photo
     post:
       consumes:
       - application/json
@@ -663,14 +669,14 @@ paths:
         name: json
         required: true
         schema:
-          $ref: '#/definitions/model.AddPhoto'
+          $ref: '#/definitions/domain.AddPhoto'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.ResponseDataAddedPhoto'
+            $ref: '#/definitions/domain.ResponseAddedPhoto'
         "400":
           description: Bad Request
           schema:
@@ -683,8 +689,8 @@ paths:
       - Bearer: []
       summary: Store a photo
       tags:
-      - photos
-  /photos/{id}:
+      - photo
+  /photo/{id}:
     delete:
       consumes:
       - application/json
@@ -701,7 +707,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.ResponseMessageDeletedPhoto'
+            $ref: '#/definitions/domain.ResponseDeletedPhoto'
         "400":
           description: Bad Request
           schema:
@@ -718,7 +724,31 @@ paths:
       - Bearer: []
       summary: Delete a photo
       tags:
-      - photos
+      - photo
+    get:
+      consumes:
+      - application/json
+      description: Get one photo with authentication user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.ResponseGetByIdPhoto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Get one photo
+      tags:
+      - photo
     put:
       consumes:
       - application/json
@@ -734,14 +764,14 @@ paths:
         name: json
         required: true
         schema:
-          $ref: '#/definitions/model.UpdatePhoto'
+          $ref: '#/definitions/domain.UpdatePhoto'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.ResponseDataUpdatedPhoto'
+            $ref: '#/definitions/domain.ResponseUpdatedPhoto'
         "400":
           description: Bad Request
           schema:
@@ -758,7 +788,7 @@ paths:
       - Bearer: []
       summary: Update a photo
       tags:
-      - photos
+      - photo
   /socialmedias:
     get:
       consumes:

@@ -64,6 +64,7 @@ func main() {
 			ctx.Next()
 		}
 	})
+	routers.Static("/public", "./public")
 
 	userRepository := userRepository.NewUserRepository(db)
 	userUseCase := userUseCase.NewUserUseCase(userRepository)

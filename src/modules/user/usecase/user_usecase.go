@@ -46,8 +46,8 @@ func (userUseCase *userUseCase) Update(ctx context.Context, user domain.User) (u
 	return u, nil
 }
 
-func (userUseCase *userUseCase) Delete(ctx context.Context, id string) (err error) {
-	if err = userUseCase.userRepository.Delete(ctx, id); err != nil {
+func (userUseCase *userUseCase) DeleteById(ctx context.Context, id string) (err error) {
+	if err = userUseCase.userRepository.DeleteById(ctx, id); err != nil {
 		return err
 	}
 
