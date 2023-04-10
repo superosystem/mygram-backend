@@ -53,26 +53,23 @@ func (userRepository *userRepository) Login(ctx context.Context, user *domain.Us
 	return
 }
 
-func (userRepository *userRepository) Update(ctx context.Context, user domain.User) (u domain.User, err error) {
+func (userRepository *userRepository) Update(ctx context.Context, u domain.User, id string) (user domain.User, err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	u = domain.User{}
-
-	if err = userRepository.db.WithContext(ctx).First(&u).Error; err != nil {
-		return u, err
+	if err = userRepository.db.WithContext(ctx).First(&user, &id).Error; err != nil {
+		return user, err
 	}
 
-	if err = userRepository.db.WithContext(ctx).Model(&u).Updates(user).Error; err != nil {
-		return u, err
+	if err = userRepository.db.WithContext(ctx).Model(&user).Updates(u).Error; err != nil {
+		return user, err
 	}
 
-	return u, nil
+	return user, nil
 }
 
 func (userRepository *userRepository) DeleteById(ctx context.Context, id string) (err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-
 	defer cancel()
 
 	if err = userRepository.db.WithContext(ctx).First(&domain.User{}, &id).Error; err != nil {
@@ -88,4 +85,26 @@ func (userRepository *userRepository) DeleteById(ctx context.Context, id string)
 	}
 
 	return
+}
+
+func (userRepository *userRepository) FindByEmail(ctx context.Context, u domain.User) (user domain.User, err error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	if err = userRepository.db.WithContext(ctx).First(&user, "email = ?", u.Email).Error; err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
+func (userRepository *userRepository) FindByUsername(ctx context.Context, u domain.User) (user domain.User, err error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	if err = userRepository.db.WithContext(ctx).First(&user, "username = ?", u.Username).Error; err != nil {
+		return user, err
+	}
+
+	return user, nil
 }

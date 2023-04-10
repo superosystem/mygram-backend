@@ -23,7 +23,7 @@ func NewUserHandler(routers *gin.Engine, userUseCase domain.UserUseCase) {
 		router.POST("/register", handler.Register)
 		router.POST("/login", handler.Login)
 		router.PUT("", middleware.Authentication(), handler.Update)
-		router.DELETE("", middleware.Authentication(), handler.DeleteById)
+		router.DELETE("", middleware.Authentication(), handler.Delete)
 	}
 }
 
@@ -34,18 +34,18 @@ func NewUserHandler(routers *gin.Engine, userUseCase domain.UserUseCase) {
 // @Accept			json
 // @Produce			json
 // @Param			json	body			domain.RegisterUser true "Register User"
-// @Success			201		{object}		domain.ResponseRegisteredUser
+// @Success			201		{object}		domain.RegisteredUser
 // @Failure			400  	{object}		helpers.ResponseMessage
 // @Failure			409  	{object}		helpers.ResponseMessage
 // @Router			/user/register	[post]
 func (handler *userHandler) Register(ctx *gin.Context) {
 	var (
-		registerUser domain.RegisterUser
-		user         domain.User
-		err          error
+		input domain.RegisterUser
+		user  domain.User
+		err   error
 	)
 
-	if err = ctx.ShouldBindJSON(&registerUser); err != nil {
+	if err = ctx.ShouldBindJSON(&input); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: err.Error(),
@@ -53,8 +53,8 @@ func (handler *userHandler) Register(ctx *gin.Context) {
 		return
 	}
 
-	if user, err = handler.userUseCase.Register(ctx.Request.Context(), &registerUser); err != nil {
-		if strings.Contains(err.Error(), "idx_users_username") {
+	if user, err = handler.userUseCase.Register(ctx.Request.Context(), &input); err != nil {
+		if strings.Contains(err.Error(), "idx_user_username") {
 			ctx.AbortWithStatusJSON(http.StatusConflict, helpers.ResponseMessage{
 				Status:  "fail",
 				Message: "the username you entered has been used",
@@ -77,13 +77,13 @@ func (handler *userHandler) Register(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, domain.ResponseRegisteredUser{
-		Status: "success",
-		Data: domain.RegisteredUser{
+	ctx.JSON(http.StatusCreated, domain.RegisteredUser{
+		Status:  "success",
+		Message: "account registration has been successful",
+		Data: domain.GetUser{
 			ID:       user.ID,
 			Username: user.Username,
 			Email:    user.Email,
-			Age:      user.Age,
 		},
 	})
 }
@@ -95,7 +95,7 @@ func (handler *userHandler) Register(ctx *gin.Context) {
 // @Accept			json
 // @Produce			json
 // @Param			json	body			domain.LoginUser	true	"Login User"
-// @Success			200		{object}		domain.ResponseLoggedInUser
+// @Success			200		{object}		domain.LoggedInUser
 // @Failure			400		{object}		helpers.ResponseMessage
 // @Failure			401		{object}		helpers.ResponseMessage
 // @Router			/user/login		[post]
@@ -112,7 +112,6 @@ func (handler *userHandler) Login(ctx *gin.Context) {
 			Status:  "fail",
 			Message: err.Error(),
 		})
-
 		return
 	}
 
@@ -122,7 +121,6 @@ func (handler *userHandler) Login(ctx *gin.Context) {
 				Status:  "unauthenticated",
 				Message: err.Error(),
 			})
-
 			return
 		}
 
@@ -130,7 +128,6 @@ func (handler *userHandler) Login(ctx *gin.Context) {
 			Status:  "unauthenticated",
 			Message: err.Error(),
 		})
-
 		return
 	}
 
@@ -139,13 +136,13 @@ func (handler *userHandler) Login(ctx *gin.Context) {
 			"error":   "unauthenticated",
 			"message": err.Error(),
 		})
-
 		return
 	}
 
-	ctx.JSON(http.StatusOK, domain.ResponseLoggedInUser{
-		Status: "success",
-		Data: domain.LoggedInUser{
+	ctx.JSON(http.StatusOK, domain.LoggedInUser{
+		Status:  "success",
+		Message: "user login has beed successful",
+		Data: domain.Token{
 			Token: token,
 		},
 	})
@@ -166,33 +163,43 @@ func (handler *userHandler) Login(ctx *gin.Context) {
 // @Router			/user	[put]
 func (handler *userHandler) Update(ctx *gin.Context) {
 	var (
-		user domain.User
-		err  error
+		input domain.UpdateUser
+		user  domain.User
+		err   error
 	)
 
 	userData := ctx.MustGet("userData").(jwt.MapClaims)
-	_ = string(userData["id"].(string))
+	userID := string(userData["id"].(string))
 
-	if err = ctx.ShouldBindJSON(&user); err != nil {
+	if err = ctx.ShouldBindJSON(&input); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: err.Error(),
 		})
-
 		return
 	}
 
-	updatedUser := domain.User{
-		Username: user.Username,
-		Email:    user.Email,
-	}
+	if user, err = handler.userUseCase.Update(ctx.Request.Context(), input, userID); err != nil {
+		if strings.Contains(err.Error(), "idx_user_username") {
+			ctx.AbortWithStatusJSON(http.StatusConflict, helpers.ResponseMessage{
+				Status:  "fail",
+				Message: "the username you entered has been used",
+			})
+			return
+		}
 
-	if user, err = handler.userUseCase.Update(ctx.Request.Context(), updatedUser); err != nil {
+		if strings.Contains(err.Error(), "idx_user_email") {
+			ctx.AbortWithStatusJSON(http.StatusConflict, helpers.ResponseMessage{
+				Status:  "fail",
+				Message: "the email you entered has been used",
+			})
+			return
+		}
+
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: err.Error(),
 		})
-
 		return
 	}
 
@@ -209,8 +216,8 @@ func (handler *userHandler) Update(ctx *gin.Context) {
 }
 
 // Delete By Idgodoc
-// @Summary			Delete a user
-// @Description		Delete a user with authentication user
+// @Summary			Delete own user
+// @Description		Delete own user with authentication user
 // @Tags			user
 // @Accept			json
 // @Produce			json
@@ -220,11 +227,11 @@ func (handler *userHandler) Update(ctx *gin.Context) {
 // @Failure			404			{object}	helpers.ResponseMessage
 // @Security		Bearer
 // @Router			/user	[delete]
-func (handler *userHandler) DeleteById(ctx *gin.Context) {
+func (handler *userHandler) Delete(ctx *gin.Context) {
 	userData := ctx.MustGet("userData").(jwt.MapClaims)
 	userID := string(userData["id"].(string))
 
-	if err := handler.userUseCase.DeleteById(ctx, userID); err != nil {
+	if err := handler.userUseCase.Delete(ctx, userID); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: "account not found",

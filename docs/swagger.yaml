@@ -1,5 +1,14 @@
 basePath: /
 definitions:
+  domain.AddComment:
+    properties:
+      message:
+        example: A comment
+        type: string
+      photo_id:
+        example: photo-123
+        type: string
+    type: object
   domain.AddPhoto:
     properties:
       caption:
@@ -10,6 +19,24 @@ definitions:
         type: string
       title:
         example: A Photo Title
+        type: string
+    type: object
+  domain.AddedComment:
+    properties:
+      created_at:
+        example: the created at generated here
+        type: string
+      id:
+        example: here is the generated comment id
+        type: string
+      message:
+        example: A comment
+        type: string
+      photo_id:
+        example: here is the generated photo id
+        type: string
+      user_id:
+        example: here is the generated user id
         type: string
     type: object
   domain.AddedPhoto:
@@ -31,6 +58,44 @@ definitions:
       user_id:
         type: string
     type: object
+  domain.Comment:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      message:
+        type: string
+      photo:
+        $ref: '#/definitions/domain.Photo'
+      photoID:
+        type: string
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/domain.User'
+      userID:
+        type: string
+    type: object
+  domain.GetComment:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      message:
+        type: string
+      photo:
+        $ref: '#/definitions/domain.Photo'
+      photo_id:
+        type: string
+      updated_at:
+        type: string
+      user:
+        $ref: '#/definitions/domain.User'
+      user_id:
+        type: string
+    type: object
   domain.GetPhoto:
     properties:
       caption:
@@ -48,10 +113,26 @@ definitions:
       user_id:
         type: string
     type: object
+  domain.GetUser:
+    properties:
+      email:
+        example: newjohndoe@example.com
+        type: string
+      id:
+        type: string
+      username:
+        example: newjohndoe
+        type: string
+    type: object
   domain.LoggedInUser:
     properties:
-      token:
-        example: the token generated here
+      data:
+        $ref: '#/definitions/domain.Token'
+      message:
+        example: message you if the process has been successful
+        type: string
+      status:
+        example: success
         type: string
     type: object
   domain.LoginUser:
@@ -61,6 +142,27 @@ definitions:
         type: string
       password:
         example: secret
+        type: string
+    type: object
+  domain.Photo:
+    properties:
+      caption:
+        type: string
+      comment:
+        $ref: '#/definitions/domain.Comment'
+      createdAt:
+        type: string
+      id:
+        type: string
+      photoUrl:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/domain.User'
+      userID:
         type: string
     type: object
   domain.RegisterUser:
@@ -80,17 +182,21 @@ definitions:
     type: object
   domain.RegisteredUser:
     properties:
-      age:
-        example: 8
-        type: integer
-      email:
-        example: johndoe@example.com
+      data:
+        $ref: '#/definitions/domain.GetUser'
+      message:
+        example: message you if the process has been successful
         type: string
-      id:
-        example: the user id generated here
+      status:
+        example: success
         type: string
-      username:
-        example: johndoe
+    type: object
+  domain.ResponseAddedComment:
+    properties:
+      data:
+        $ref: '#/definitions/domain.AddedComment'
+      status:
+        example: success
         type: string
     type: object
   domain.ResponseAddedPhoto:
@@ -128,10 +234,21 @@ definitions:
         example: success
         type: string
     type: object
-  domain.ResponseLoggedInUser:
+  domain.ResponseGetComment:
     properties:
       data:
-        $ref: '#/definitions/domain.LoggedInUser'
+        items:
+          $ref: '#/definitions/domain.GetComment'
+        type: array
+      status:
+        example: success
+        type: string
+    type: object
+  domain.ResponseMessageDeletedComment:
+    properties:
+      message:
+        example: your comment has been successfully deleted
+        type: string
       status:
         example: success
         type: string
@@ -145,10 +262,10 @@ definitions:
         example: success
         type: string
     type: object
-  domain.ResponseRegisteredUser:
+  domain.ResponseUpdatedComment:
     properties:
       data:
-        $ref: '#/definitions/domain.RegisteredUser'
+        $ref: '#/definitions/domain.UpdatedComment'
       status:
         example: success
         type: string
@@ -167,6 +284,18 @@ definitions:
         $ref: '#/definitions/domain.UpdatedUser'
       status:
         example: success
+        type: string
+    type: object
+  domain.Token:
+    properties:
+      token:
+        example: the token generated here
+        type: string
+    type: object
+  domain.UpdateComment:
+    properties:
+      message:
+        example: A new comment
         type: string
     type: object
   domain.UpdatePhoto:
@@ -195,6 +324,22 @@ definitions:
         example: newjohndoe
         type: string
     type: object
+  domain.UpdatedComment:
+    properties:
+      id:
+        type: string
+      message:
+        example: A comment
+        type: string
+      photo_id:
+        example: here is the generated photo id
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        example: here is the generated user id
+        type: string
+    type: object
   domain.UpdatedPhoto:
     properties:
       caption:
@@ -215,9 +360,6 @@ definitions:
       age:
         example: 8
         type: integer
-      created_at:
-        example: create time should be here
-        type: string
       email:
         example: newjohndoe@example.com
         type: string
@@ -231,20 +373,26 @@ definitions:
         example: newjohndoe
         type: string
     type: object
+  domain.User:
+    properties:
+      age:
+        type: integer
+      createdAt:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      updatedAt:
+        type: string
+      username:
+        type: string
+    type: object
   helpers.ResponseMessage:
     properties:
       message:
         type: string
       status:
-        type: string
-    type: object
-  model.AddComment:
-    properties:
-      message:
-        example: A comment
-        type: string
-      photo_id:
-        example: photo-123
         type: string
     type: object
   model.AddSocialMedia:
@@ -254,24 +402,6 @@ definitions:
         type: string
       social_media_url:
         example: https://www.example.com/johndoe
-        type: string
-    type: object
-  model.AddedComment:
-    properties:
-      created_at:
-        example: the created at generated here
-        type: string
-      id:
-        example: here is the generated comment id
-        type: string
-      message:
-        example: A comment
-        type: string
-      photo_id:
-        example: here is the generated photo id
-        type: string
-      user_id:
-        example: here is the generated user id
         type: string
     type: object
   model.AddedSocialMedia:
@@ -292,60 +422,10 @@ definitions:
         example: here is the generated user id
         type: string
     type: object
-  model.FetchedComment:
-    properties:
-      created_at:
-        type: string
-      id:
-        type: string
-      message:
-        type: string
-      photo:
-        $ref: '#/definitions/model.Photo'
-      photo_id:
-        type: string
-      updated_at:
-        type: string
-      user:
-        $ref: '#/definitions/src_modules_comment_model.User'
-      user_id:
-        type: string
-    type: object
-  model.Photo:
-    properties:
-      caption:
-        type: string
-      id:
-        type: string
-      photo_url:
-        type: string
-      title:
-        type: string
-      user_id:
-        type: string
-    type: object
-  model.ResponseDataAddedComment:
-    properties:
-      data:
-        $ref: '#/definitions/model.AddedComment'
-      status:
-        example: success
-        type: string
-    type: object
   model.ResponseDataAddedSocialMedia:
     properties:
       data:
         $ref: '#/definitions/model.AddedSocialMedia'
-      status:
-        example: success
-        type: string
-    type: object
-  model.ResponseDataFetchedComment:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/model.FetchedComment'
-        type: array
       status:
         example: success
         type: string
@@ -358,27 +438,10 @@ definitions:
         example: success
         type: string
     type: object
-  model.ResponseDataUpdatedComment:
-    properties:
-      data:
-        $ref: '#/definitions/model.UpdatedComment'
-      status:
-        example: success
-        type: string
-    type: object
   model.ResponseDataUpdatedSocialMedia:
     properties:
       data:
         $ref: '#/definitions/model.UpdatedSocialMedia'
-      status:
-        example: success
-        type: string
-    type: object
-  model.ResponseMessageDeletedComment:
-    properties:
-      message:
-        example: your comment has been successfully deleted
-        type: string
       status:
         example: success
         type: string
@@ -410,7 +473,7 @@ definitions:
         example: here is the generated updated at
         type: string
       user:
-        $ref: '#/definitions/src_modules_socialmedia_model.User'
+        $ref: '#/definitions/model.User'
       user_id:
         example: here is the generated user id
         type: string
@@ -422,12 +485,6 @@ definitions:
           $ref: '#/definitions/model.SocialMedia'
         type: array
     type: object
-  model.UpdateComment:
-    properties:
-      message:
-        example: A new comment
-        type: string
-    type: object
   model.UpdateSocialMedia:
     properties:
       name:
@@ -435,21 +492,6 @@ definitions:
         type: string
       social_media_url:
         example: https://www.newexample.com/johndoe
-        type: string
-    type: object
-  model.UpdatedComment:
-    properties:
-      caption:
-        type: string
-      id:
-        type: string
-      photo_url:
-        type: string
-      title:
-        type: string
-      updated_at:
-        type: string
-      user_id:
         type: string
     type: object
   model.UpdatedSocialMedia:
@@ -470,16 +512,7 @@ definitions:
         example: here is the generated user id
         type: string
     type: object
-  src_modules_comment_model.User:
-    properties:
-      email:
-        type: string
-      id:
-        type: string
-      username:
-        type: string
-    type: object
-  src_modules_socialmedia_model.User:
+  model.User:
     properties:
       email:
         example: johndoe@example.com
@@ -505,31 +538,7 @@ info:
   title: mygram backend
   version: 1.0.0
 paths:
-  /comments:
-    get:
-      consumes:
-      - application/json
-      description: Get all comments with authentication user
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.ResponseDataFetchedComment'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/helpers.ResponseMessage'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/helpers.ResponseMessage'
-      security:
-      - Bearer: []
-      summary: Fetch all comments
-      tags:
-      - comments
+  /comment:
     post:
       consumes:
       - application/json
@@ -540,14 +549,14 @@ paths:
         name: json
         required: true
         schema:
-          $ref: '#/definitions/model.AddComment'
+          $ref: '#/definitions/domain.AddComment'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.ResponseDataAddedComment'
+            $ref: '#/definitions/domain.ResponseAddedComment'
         "400":
           description: Bad Request
           schema:
@@ -560,8 +569,8 @@ paths:
       - Bearer: []
       summary: Add a comment
       tags:
-      - comments
-  /comments/{id}:
+      - comment
+  /comment/{id}:
     delete:
       consumes:
       - application/json
@@ -578,7 +587,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.ResponseMessageDeletedComment'
+            $ref: '#/definitions/domain.ResponseMessageDeletedComment'
         "400":
           description: Bad Request
           schema:
@@ -595,7 +604,7 @@ paths:
       - Bearer: []
       summary: Delete a comment
       tags:
-      - comments
+      - comment
     put:
       consumes:
       - application/json
@@ -611,14 +620,14 @@ paths:
         name: json
         required: true
         schema:
-          $ref: '#/definitions/model.UpdateComment'
+          $ref: '#/definitions/domain.UpdateComment'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.ResponseDataUpdatedComment'
+            $ref: '#/definitions/domain.ResponseUpdatedComment'
         "400":
           description: Bad Request
           schema:
@@ -635,7 +644,32 @@ paths:
       - Bearer: []
       summary: Update a comment
       tags:
-      - comments
+      - comment
+  /comment/{photoId}:
+    get:
+      consumes:
+      - application/json
+      description: Get all comments by photo with authentication user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.ResponseGetComment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Get all by photo comments
+      tags:
+      - comment
   /photo:
     get:
       consumes:
@@ -1002,7 +1036,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.ResponseLoggedInUser'
+            $ref: '#/definitions/domain.LoggedInUser'
         "400":
           description: Bad Request
           schema:
@@ -1032,7 +1066,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/domain.ResponseRegisteredUser'
+            $ref: '#/definitions/domain.RegisteredUser'
         "400":
           description: Bad Request
           schema:

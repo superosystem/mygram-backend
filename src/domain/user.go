@@ -43,15 +43,24 @@ func (user *User) BeforeUpdate(db *gorm.DB) (err error) {
 type UserUseCase interface {
 	Register(context.Context, *RegisterUser) (User, error)
 	Login(context.Context, *LoginUser) (User, error)
-	Update(context.Context, User) (User, error)
-	DeleteById(context.Context, string) error
+	Update(context.Context, UpdateUser, string) (User, error)
+	Delete(context.Context, string) error
 }
 
 type UserRepository interface {
 	Register(context.Context, *User) error
 	Login(context.Context, *User) error
-	Update(context.Context, User) (User, error)
+	Update(context.Context, User, string) (User, error)
 	DeleteById(context.Context, string) error
+	FindByEmail(context.Context, User) (User, error)
+	FindByUsername(context.Context, User) (User, error)
+}
+
+// Represents for Get User
+type GetUser struct {
+	ID       string `json:"id"`
+	Username string `json:"username" example:"newjohndoe"`
+	Email    string `json:"email" example:"newjohndoe@example.com"`
 }
 
 // Represents for register user
@@ -62,18 +71,11 @@ type RegisterUser struct {
 	Age      uint   `json:"age" form:"age" example:"8"`
 }
 
-// Represents for registered use
+// Reprensents for registered user
 type RegisteredUser struct {
-	ID       string `json:"id" example:"the user id generated here"`
-	Email    string `json:"email" example:"johndoe@example.com"`
-	Username string `json:"username" example:"johndoe"`
-	Age      uint   `json:"age" example:"8"`
-}
-
-// Reprensents for response success register user
-type ResponseRegisteredUser struct {
-	Status string         `json:"status" example:"success"`
-	Data   RegisteredUser `json:"data"`
+	Status  string  `json:"status" example:"success"`
+	Message string  `json:"message" example:"message you if the process has been successful"`
+	Data    GetUser `json:"data"`
 }
 
 // Represents for login user
@@ -82,15 +84,16 @@ type LoginUser struct {
 	Password string `json:"password,omitempty" form:"password" example:"secret"`
 }
 
-// Represents for loggedin user
-type LoggedInUser struct {
+// Represents for jwt user
+type Token struct {
 	Token string `json:"token" example:"the token generated here"`
 }
 
-// Represents for response loggedin user
-type ResponseLoggedInUser struct {
-	Status string       `json:"status" example:"success"`
-	Data   LoggedInUser `json:"data"`
+// Represents for loggedin user
+type LoggedInUser struct {
+	Status  string `json:"status" example:"success"`
+	Message string `json:"message" example:"message you if the process has been successful"`
+	Data    Token  `json:"data"`
 }
 
 // Represents for update user
@@ -106,7 +109,6 @@ type UpdatedUser struct {
 	Email     string     `json:"email" example:"newjohndoe@example.com"`
 	Username  string     `json:"username" example:"newjohndoe"`
 	Age       uint       `json:"age" example:"8"`
-	CreatedAt *time.Time `json:"created_at" example:"create time should be here"`
 	UpdatedAt *time.Time `json:"updated_at" example:"update time should be here"`
 }
 

@@ -14,10 +14,10 @@ type Photo struct {
 	Caption   string     `gorm:"type:VARCHAR(50)"`
 	PhotoUrl  string     `gorm:"not null" valid:"required"`
 	UserID    string     `gorm:"type:VARCHAR(50);not null"`
-	User      *User      `gorm:"foreignKey:UserID;constraint:onUpdate:CASCADE,onDelete:CASCADE" json:"-"`
+	User      *User      `gorm:"foreignKey:UserID;constraint:onUpdate:CASCADE,onDelete:CASCADE"`
 	CreatedAt *time.Time `gorm:"not null;autoCreateTime"`
 	UpdatedAt *time.Time `gorm:"not null;autoCreateTime"`
-	Comment   *Comment   `json:"-"`
+	Comment   *Comment
 }
 
 func (photo *Photo) BeforeCreate(db *gorm.DB) (err error) {
@@ -104,6 +104,7 @@ type ResponseDeletedPhoto struct {
 	Message string `json:"message" example:"your account has been successfully deleted"`
 }
 
+// RepresentGetPhoto
 type GetPhoto struct {
 	ID        string     `json:"id"`
 	Title     string     `json:"title,"`
@@ -115,11 +116,11 @@ type GetPhoto struct {
 }
 
 type ResponseGetAllPhotos struct {
-	Status string         `json:"status" example:"success"`
+	Status string     `json:"status" example:"success"`
 	Data   []GetPhoto `json:"data"`
 }
 
 type ResponseGetByIdPhoto struct {
-	Status string       `json:"status" example:"success"`
+	Status string   `json:"status" example:"success"`
 	Data   GetPhoto `json:"data"`
 }

@@ -23,45 +23,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/comments": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "Get all comments with authentication user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "comments"
-                ],
-                "summary": "Fetch all comments",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/model.ResponseDataFetchedComment"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/helpers.ResponseMessage"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/helpers.ResponseMessage"
-                        }
-                    }
-                }
-            },
+        "/comment": {
             "post": {
                 "security": [
                     {
@@ -76,7 +38,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "comments"
+                    "comment"
                 ],
                 "summary": "Add a comment",
                 "parameters": [
@@ -86,7 +48,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.AddComment"
+                            "$ref": "#/definitions/domain.AddComment"
                         }
                     }
                 ],
@@ -94,7 +56,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseDataAddedComment"
+                            "$ref": "#/definitions/domain.ResponseAddedComment"
                         }
                     },
                     "400": {
@@ -112,7 +74,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/comments/{id}": {
+        "/comment/{id}": {
             "put": {
                 "security": [
                     {
@@ -127,7 +89,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "comments"
+                    "comment"
                 ],
                 "summary": "Update a comment",
                 "parameters": [
@@ -144,7 +106,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UpdateComment"
+                            "$ref": "#/definitions/domain.UpdateComment"
                         }
                     }
                 ],
@@ -152,7 +114,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseDataUpdatedComment"
+                            "$ref": "#/definitions/domain.ResponseUpdatedComment"
                         }
                     },
                     "400": {
@@ -189,7 +151,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "comments"
+                    "comment"
                 ],
                 "summary": "Delete a comment",
                 "parameters": [
@@ -205,7 +167,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseMessageDeletedComment"
+                            "$ref": "#/definitions/domain.ResponseMessageDeletedComment"
                         }
                     },
                     "400": {
@@ -222,6 +184,46 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/comment/{photoId}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get all comments by photo with authentication user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "Get all by photo comments",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ResponseGetComment"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/helpers.ResponseMessage"
                         }
@@ -803,7 +805,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.ResponseLoggedInUser"
+                            "$ref": "#/definitions/domain.LoggedInUser"
                         }
                     },
                     "400": {
@@ -849,7 +851,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.ResponseRegisteredUser"
+                            "$ref": "#/definitions/domain.RegisteredUser"
                         }
                     },
                     "400": {
@@ -869,6 +871,19 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.AddComment": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "A comment"
+                },
+                "photo_id": {
+                    "type": "string",
+                    "example": "photo-123"
+                }
+            }
+        },
         "domain.AddPhoto": {
             "type": "object",
             "properties": {
@@ -883,6 +898,31 @@ const docTemplate = `{
                 "title": {
                     "type": "string",
                     "example": "A Photo Title"
+                }
+            }
+        },
+        "domain.AddedComment": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "the created at generated here"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "here is the generated comment id"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "A comment"
+                },
+                "photo_id": {
+                    "type": "string",
+                    "example": "here is the generated photo id"
+                },
+                "user_id": {
+                    "type": "string",
+                    "example": "here is the generated user id"
                 }
             }
         },
@@ -907,6 +947,64 @@ const docTemplate = `{
                 "title": {
                     "type": "string",
                     "example": "A Photo Title"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Comment": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "photo": {
+                    "$ref": "#/definitions/domain.Photo"
+                },
+                "photoID": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/domain.User"
+                },
+                "userID": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.GetComment": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "photo": {
+                    "$ref": "#/definitions/domain.Photo"
+                },
+                "photo_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/domain.User"
                 },
                 "user_id": {
                     "type": "string"
@@ -939,12 +1037,35 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.GetUser": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "newjohndoe@example.com"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "newjohndoe"
+                }
+            }
+        },
         "domain.LoggedInUser": {
             "type": "object",
             "properties": {
-                "token": {
+                "data": {
+                    "$ref": "#/definitions/domain.Token"
+                },
+                "message": {
                     "type": "string",
-                    "example": "the token generated here"
+                    "example": "message you if the process has been successful"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
                 }
             }
         },
@@ -958,6 +1079,38 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "example": "secret"
+                }
+            }
+        },
+        "domain.Photo": {
+            "type": "object",
+            "properties": {
+                "caption": {
+                    "type": "string"
+                },
+                "comment": {
+                    "$ref": "#/definitions/domain.Comment"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "photoUrl": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/domain.User"
+                },
+                "userID": {
+                    "type": "string"
                 }
             }
         },
@@ -985,21 +1138,28 @@ const docTemplate = `{
         "domain.RegisteredUser": {
             "type": "object",
             "properties": {
-                "age": {
-                    "type": "integer",
-                    "example": 8
+                "data": {
+                    "$ref": "#/definitions/domain.GetUser"
                 },
-                "email": {
+                "message": {
                     "type": "string",
-                    "example": "johndoe@example.com"
+                    "example": "message you if the process has been successful"
                 },
-                "id": {
+                "status": {
                     "type": "string",
-                    "example": "the user id generated here"
+                    "example": "success"
+                }
+            }
+        },
+        "domain.ResponseAddedComment": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.AddedComment"
                 },
-                "username": {
+                "status": {
                     "type": "string",
-                    "example": "johndoe"
+                    "example": "success"
                 }
             }
         },
@@ -1055,11 +1215,27 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.ResponseLoggedInUser": {
+        "domain.ResponseGetComment": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/domain.LoggedInUser"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.GetComment"
+                    }
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.ResponseMessageDeletedComment": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "your comment has been successfully deleted"
                 },
                 "status": {
                     "type": "string",
@@ -1080,11 +1256,11 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.ResponseRegisteredUser": {
+        "domain.ResponseUpdatedComment": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/domain.RegisteredUser"
+                    "$ref": "#/definitions/domain.UpdatedComment"
                 },
                 "status": {
                     "type": "string",
@@ -1113,6 +1289,24 @@ const docTemplate = `{
                 "status": {
                     "type": "string",
                     "example": "success"
+                }
+            }
+        },
+        "domain.Token": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "example": "the token generated here"
+                }
+            }
+        },
+        "domain.UpdateComment": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "A new comment"
                 }
             }
         },
@@ -1153,6 +1347,29 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.UpdatedComment": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "A comment"
+                },
+                "photo_id": {
+                    "type": "string",
+                    "example": "here is the generated photo id"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "string",
+                    "example": "here is the generated user id"
+                }
+            }
+        },
         "domain.UpdatedPhoto": {
             "type": "object",
             "properties": {
@@ -1183,10 +1400,6 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 8
                 },
-                "created_at": {
-                    "type": "string",
-                    "example": "create time should be here"
-                },
                 "email": {
                     "type": "string",
                     "example": "newjohndoe@example.com"
@@ -1205,6 +1418,29 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.User": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "helpers.ResponseMessage": {
             "type": "object",
             "properties": {
@@ -1213,19 +1449,6 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string"
-                }
-            }
-        },
-        "model.AddComment": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "A comment"
-                },
-                "photo_id": {
-                    "type": "string",
-                    "example": "photo-123"
                 }
             }
         },
@@ -1239,31 +1462,6 @@ const docTemplate = `{
                 "social_media_url": {
                     "type": "string",
                     "example": "https://www.example.com/johndoe"
-                }
-            }
-        },
-        "model.AddedComment": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string",
-                    "example": "the created at generated here"
-                },
-                "id": {
-                    "type": "string",
-                    "example": "here is the generated comment id"
-                },
-                "message": {
-                    "type": "string",
-                    "example": "A comment"
-                },
-                "photo_id": {
-                    "type": "string",
-                    "example": "here is the generated photo id"
-                },
-                "user_id": {
-                    "type": "string",
-                    "example": "here is the generated user id"
                 }
             }
         },
@@ -1292,87 +1490,11 @@ const docTemplate = `{
                 }
             }
         },
-        "model.FetchedComment": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "photo": {
-                    "$ref": "#/definitions/model.Photo"
-                },
-                "photo_id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/src_modules_comment_model.User"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.Photo": {
-            "type": "object",
-            "properties": {
-                "caption": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "photo_url": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.ResponseDataAddedComment": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/model.AddedComment"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
         "model.ResponseDataAddedSocialMedia": {
             "type": "object",
             "properties": {
                 "data": {
                     "$ref": "#/definitions/model.AddedSocialMedia"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "model.ResponseDataFetchedComment": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.FetchedComment"
-                    }
                 },
                 "status": {
                     "type": "string",
@@ -1392,36 +1514,11 @@ const docTemplate = `{
                 }
             }
         },
-        "model.ResponseDataUpdatedComment": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/model.UpdatedComment"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
         "model.ResponseDataUpdatedSocialMedia": {
             "type": "object",
             "properties": {
                 "data": {
                     "$ref": "#/definitions/model.UpdatedSocialMedia"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "model.ResponseMessageDeletedComment": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "your comment has been successfully deleted"
                 },
                 "status": {
                     "type": "string",
@@ -1466,7 +1563,7 @@ const docTemplate = `{
                     "example": "here is the generated updated at"
                 },
                 "user": {
-                    "$ref": "#/definitions/src_modules_socialmedia_model.User"
+                    "$ref": "#/definitions/model.User"
                 },
                 "user_id": {
                     "type": "string",
@@ -1485,15 +1582,6 @@ const docTemplate = `{
                 }
             }
         },
-        "model.UpdateComment": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "A new comment"
-                }
-            }
-        },
         "model.UpdateSocialMedia": {
             "type": "object",
             "properties": {
@@ -1504,29 +1592,6 @@ const docTemplate = `{
                 "social_media_url": {
                     "type": "string",
                     "example": "https://www.newexample.com/johndoe"
-                }
-            }
-        },
-        "model.UpdatedComment": {
-            "type": "object",
-            "properties": {
-                "caption": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "photo_url": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
                 }
             }
         },
@@ -1555,21 +1620,7 @@ const docTemplate = `{
                 }
             }
         },
-        "src_modules_comment_model.User": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "src_modules_socialmedia_model.User": {
+        "model.User": {
             "type": "object",
             "properties": {
                 "email": {

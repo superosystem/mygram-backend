@@ -83,7 +83,7 @@ func AuthorizationComment(commentUseCase domain.CommentUseCase) gin.HandlerFunc 
 		userData := ctx.MustGet("userData").(jwt.MapClaims)
 		userID := string(userData["id"].(string))
 
-		if err = commentUseCase.GetByID(ctx.Request.Context(), &comment, commentID); err != nil {
+		if err = commentUseCase.FindById(ctx.Request.Context(), &comment, commentID); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, helpers.ResponseMessage{
 				Status:  "fail",
 				Message: fmt.Sprintf("comment with id %s doesn't exist", commentID),
