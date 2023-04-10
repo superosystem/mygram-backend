@@ -46,8 +46,6 @@ func (socialMediaUseCase *socialMediaUseCase) FindAllByUser(ctx context.Context,
 	return
 }
 
-
-
 func (socialMediaUseCase *socialMediaUseCase) FindById(ctx context.Context, socialMedia *domain.SocialMedia, id string) (err error) {
 	if err = socialMediaUseCase.socialMediaRepository.FindById(ctx, socialMedia, id); err != nil {
 		return err
@@ -55,5 +53,3 @@ func (socialMediaUseCase *socialMediaUseCase) FindById(ctx context.Context, soci
 
 	return
 }
-
-
