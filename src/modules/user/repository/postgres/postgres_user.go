@@ -40,28 +40,39 @@ func (userRepository *userRepository) Register(ctx context.Context, user *domain
 func (userRepository *userRepository) Login(ctx context.Context, user *domain.User) (err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
+
 	password := user.Password
 
 	if err = userRepository.db.WithContext(ctx).Where("email = ?", user.Email).Take(&user).Error; err != nil {
-		return errors.New("the email you entered are not found")
+		return errors.New("the email you entered are not registered")
 	}
 
 	if isValid := helpers.Compare([]byte(user.Password), []byte(password)); !isValid {
-		return errors.New("the credential you entered are wrong")
+		return errors.New("the password you entered are wrong")
 	}
 
 	return
 }
 
-func (userRepository *userRepository) Update(ctx context.Context, u domain.User, id string) (user domain.User, err error) {
+func (userRepository *userRepository) Update(ctx context.Context, u domain.User) (user domain.User, err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	if err = userRepository.db.WithContext(ctx).First(&user, &id).Error; err != nil {
+	user = domain.User{}
+
+	if err = userRepository.db.WithContext(ctx).First(&user).Error; err != nil {
 		return user, err
 	}
 
-	if err = userRepository.db.WithContext(ctx).Model(&user).Updates(u).Error; err != nil {
+	if user.Email == u.Email {
+		u.Email = ""
+	}
+
+	if user.Username == u.Username {
+		u.Username = ""
+	}
+
+	if err = userRepository.db.WithContext(ctx).Model(&user).Updates(&u).Error; err != nil {
 		return user, err
 	}
 
@@ -87,7 +98,7 @@ func (userRepository *userRepository) DeleteById(ctx context.Context, id string)
 	return
 }
 
-func (userRepository *userRepository) FindByEmail(ctx context.Context, u domain.User) (user domain.User, err error) {
+func (userRepository *userRepository) FindByEmail(ctx context.Context, u *domain.User) (user domain.User, err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
@@ -98,7 +109,7 @@ func (userRepository *userRepository) FindByEmail(ctx context.Context, u domain.
 	return user, nil
 }
 
-func (userRepository *userRepository) FindByUsername(ctx context.Context, u domain.User) (user domain.User, err error) {
+func (userRepository *userRepository) FindByUsername(ctx context.Context, u *domain.User) (user domain.User, err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 

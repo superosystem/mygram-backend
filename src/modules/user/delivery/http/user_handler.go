@@ -53,7 +53,12 @@ func (handler *userHandler) Register(ctx *gin.Context) {
 		return
 	}
 
-	if user, err = handler.userUseCase.Register(ctx.Request.Context(), &input); err != nil {
+	user.Username = input.Username
+	user.Email = input.Email
+	user.Password = input.Password
+	user.Age = input.Age
+
+	if err = handler.userUseCase.Register(ctx.Request.Context(), &user); err != nil {
 		if strings.Contains(err.Error(), "idx_user_username") {
 			ctx.AbortWithStatusJSON(http.StatusConflict, helpers.ResponseMessage{
 				Status:  "fail",
@@ -101,13 +106,13 @@ func (handler *userHandler) Register(ctx *gin.Context) {
 // @Router			/user/login		[post]
 func (handler *userHandler) Login(ctx *gin.Context) {
 	var (
-		loginUser domain.LoginUser
-		user      domain.User
-		err       error
-		token     string
+		input domain.LoginUser
+		user  domain.User
+		err   error
+		token string
 	)
 
-	if err = ctx.ShouldBindJSON(&loginUser); err != nil {
+	if err = ctx.ShouldBindJSON(&input); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: err.Error(),
@@ -115,7 +120,10 @@ func (handler *userHandler) Login(ctx *gin.Context) {
 		return
 	}
 
-	if user, err = handler.userUseCase.Login(ctx.Request.Context(), &loginUser); err != nil {
+	user.Email = input.Email
+	user.Password = input.Password
+
+	if err = handler.userUseCase.Login(ctx.Request.Context(), &user); err != nil {
 		if strings.Contains(err.Error(), "the credential you entered are wrong") {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 				Status:  "unauthenticated",
@@ -179,7 +187,12 @@ func (handler *userHandler) Update(ctx *gin.Context) {
 		return
 	}
 
-	if user, err = handler.userUseCase.Update(ctx.Request.Context(), input, userID); err != nil {
+	user.Email = input.Email
+	user.Username = input.Username
+	user.Age = input.Age
+	user.ID = userID
+
+	if user, err = handler.userUseCase.Update(ctx.Request.Context(), user); err != nil {
 		if strings.Contains(err.Error(), "idx_user_username") {
 			ctx.AbortWithStatusJSON(http.StatusConflict, helpers.ResponseMessage{
 				Status:  "fail",

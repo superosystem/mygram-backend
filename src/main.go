@@ -68,22 +68,18 @@ func main() {
 
 	userRepository := userRepository.NewUserRepository(db)
 	userUseCase := userUseCase.NewUserUseCase(userRepository)
-
 	userDelivery.NewUserHandler(routers, userUseCase)
 
 	photoRepository := photoRepository.NewPhotoRepository(db)
 	photoUseCase := photoUseCase.NewPhotoUseCase(photoRepository)
-
 	photoDelivery.NewPhotoHandler(routers, photoUseCase)
 
 	commentRepository := commentRepository.NewCommentRepository(db)
 	commentUseCase := commentUseCase.NewCommentUseCase(commentRepository)
-
 	commentDelivery.NewCommentHandler(routers, commentUseCase, photoUseCase)
 
 	socialMediaRepository := socialMediaRepository.NewSocialMediaRepository(db)
 	socialMediaUseCase := socialMediaUseCase.NewSocialMediaUseCase(socialMediaRepository)
-
 	socialMediaDelivery.NewSocialMediaHandler(routers, socialMediaUseCase)
 
 	docs.SwaggerInfo.BasePath = "/api/v1"
@@ -97,7 +93,6 @@ func main() {
 
 	if len(os.Args) > 1 {
 		reqPort := os.Args[1]
-
 		if reqPort != "" {
 			port = reqPort
 		}
