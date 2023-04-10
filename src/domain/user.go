@@ -12,12 +12,12 @@ import (
 // User represents entity for a user
 type User struct {
 	ID           string         `gorm:"primaryKey;type:VARCHAR(50)" json:"id"`
-	Username     string         `gorm:"column:username;type:VARCHAR(50);uniqueIndex;not null" valid:"required"`
-	Email        string         `gorm:"type:VARCHAR(50);uniqueIndex;not null" valid:"email,required"`
-	Password     string         `gorm:"not null" valid:"required,minstringlength(6)" json:"-"`
-	Age          uint           `gorm:"not null" valid:"required,range(8|63)"`
-	CreatedAt    *time.Time     `gorm:"not null;autoCreateTime"`
-	UpdatedAt    *time.Time     `gorm:"not null;autocreateTime"`
+	Username     string         `gorm:"type:VARCHAR(50);uniqueIndex;not null" valid:"required" form:"username" json:"username" example:"johndoe"`
+	Email        string         `gorm:"type:VARCHAR(50);uniqueIndex;not null" valid:"email,required" form:"email" json:"email" example:"johndoe@example.com"`
+	Password     string         `gorm:"not null" valid:"required,minstringlength(6)" form:"password" json:"password,omitempty" example:"secret"`
+	Age          uint           `gorm:"not null" valid:"required,range(8|63)" form:"age" json:"age,omitempty" example:"8"`
+	CreatedAt    *time.Time     `gorm:"not null;autoCreateTime" json:"created_at,omitempty"`
+	UpdatedAt    *time.Time     `gorm:"not null;autocreateTime" json:"updated_at,omitempty"`
 	Photos       *[]Photo       `json:"-"`
 	SocialMedias *[]SocialMedia `json:"-"`
 }
@@ -54,13 +54,6 @@ type UserRepository interface {
 	DeleteById(context.Context, string) error
 	FindByEmail(context.Context, User) (User, error)
 	FindByUsername(context.Context, User) (User, error)
-}
-
-// Represents for Get User
-type GetUser struct {
-	ID       string `json:"id"`
-	Username string `json:"username" example:"newjohndoe"`
-	Email    string `json:"email" example:"newjohndoe@example.com"`
 }
 
 // Represents for register user
@@ -104,7 +97,7 @@ type UpdateUser struct {
 }
 
 // Represents for updated user
-type UpdatedUser struct {
+type UpdatedDataUser struct {
 	ID        string     `json:"id" example:"here is the generated user id"`
 	Email     string     `json:"email" example:"newjohndoe@example.com"`
 	Username  string     `json:"username" example:"newjohndoe"`
@@ -113,13 +106,21 @@ type UpdatedUser struct {
 }
 
 // Represents for response updated user
-type ResponseUpdatedUser struct {
-	Status string      `json:"status" example:"success"`
-	Data   UpdatedUser `json:"data"`
+type UpdatedUser struct {
+	Status  string          `json:"status" example:"success"`
+	Message string          `json:"message" example:"message you if the process has been successful"`
+	Data    UpdatedDataUser `json:"data"`
 }
 
 // Represents for response deleted user
-type ResponseMessageDeletedUser struct {
+type DeletedUser struct {
 	Status  string `json:"status" example:"success"`
 	Message string `json:"message" example:"your account has been successfully deleted"`
+}
+
+// Represents for Get User
+type GetUser struct {
+	ID       string `json:"id"`
+	Username string `json:"username" example:"newjohndoe"`
+	Email    string `json:"email" example:"newjohndoe@example.com"`
 }

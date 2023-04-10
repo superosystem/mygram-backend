@@ -14,16 +14,31 @@ func NewCommentUseCase(commentRepository domain.CommentRepository) *commentUseCa
 	return &commentUseCase{commentRepository}
 }
 
-func (commentUseCase *commentUseCase) Save(ctx context.Context, comment *domain.Comment) (err error) {
-	if err = commentUseCase.commentRepository.Save(ctx, comment); err != nil {
-		return err
+func (commentUseCase *commentUseCase) Save(ctx context.Context, input *domain.AddComment) (comment domain.Comment, err error) {
+	comment.Message = input.Message
+	comment.PhotoID = input.PhotoID
+	comment.UserID = input.UserID
+
+	if err = commentUseCase.commentRepository.Save(ctx, &comment); err != nil {
+		return comment, err
 	}
 
-	return
+	if err = commentUseCase.commentRepository.FindById(ctx, &comment, comment.ID); err != nil {
+		return comment, err
+	}
+
+	return comment, nil
 }
 
-func (commentUseCase *commentUseCase) Update(ctx context.Context, c domain.Comment, id string) (comment domain.Comment, err error) {
-	if comment, err = commentUseCase.commentRepository.Update(ctx, c, id); err != nil {
+func (commentUseCase *commentUseCase) Update(ctx context.Context, input domain.UpdateComment, id string) (comment domain.Comment, err error) {
+	comment.Message = input.Message
+	comment.UserID = input.UserID
+
+	if comment, err = commentUseCase.commentRepository.Update(ctx, comment, id); err != nil {
+		return comment, err
+	}
+
+	if err = commentUseCase.commentRepository.FindById(ctx, &comment, id); err != nil {
 		return comment, err
 	}
 
@@ -38,27 +53,24 @@ func (commentUseCase *commentUseCase) DeleteById(ctx context.Context, id string)
 	return
 }
 
-/*
-func (commentUseCase *commentUseCase) GetAll(ctx context.Context, comments *[]domain.Comment, userID string) (err error) {
-	if err = commentUseCase.commentRepository.Fetch(ctx, comments, userID); err != nil {
+func (commentUseCase *commentUseCase) FindAllByUser(ctx context.Context, comments *[]domain.Comment, userID string) (err error) {
+	if err = commentUseCase.commentRepository.FindAllByUser(ctx, comments, userID); err != nil {
 		return err
 	}
 
 	return
 }
 
-*/
+func (commentUseCase *commentUseCase) FindAllByPhoto(ctx context.Context, comment *[]domain.Comment, id string) (err error) {
+	if err = commentUseCase.commentRepository.FindAllByPhoto(ctx, comment, id); err != nil {
+		return err
+	}
+
+	return
+}
 
 func (commentUseCase *commentUseCase) FindById(ctx context.Context, comment *domain.Comment, id string) (err error) {
 	if err = commentUseCase.commentRepository.FindById(ctx, comment, id); err != nil {
-		return err
-	}
-
-	return
-}
-
-func (commentUseCase *commentUseCase) FindByPhoto(ctx context.Context, comment *[]domain.Comment, id string) (err error) {
-	if err = commentUseCase.commentRepository.FindByPhoto(ctx, comment, id); err != nil {
 		return err
 	}
 

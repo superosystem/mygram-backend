@@ -19,21 +19,7 @@ func NewSocialMediaRepository(db *gorm.DB) *socialMediaRepository {
 	return &socialMediaRepository{db}
 }
 
-func (socialMediaRepository *socialMediaRepository) Fetch(ctx context.Context, socialMedias *[]domain.SocialMedia, userID string) (err error) {
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-
-	defer cancel()
-
-	if err = socialMediaRepository.db.WithContext(ctx).Where("user_id = ?", userID).Preload("User", func(db *gorm.DB) *gorm.DB {
-		return db.Select("ID", "Email", "Username", "ProfileImageUrl")
-	}).Find(&socialMedias).Error; err != nil {
-		return err
-	}
-
-	return
-}
-
-func (socialMediaRepository *socialMediaRepository) Store(ctx context.Context, socialMedia *domain.SocialMedia) (err error) {
+func (socialMediaRepository *socialMediaRepository) Save(ctx context.Context, socialMedia *domain.SocialMedia) (err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 
 	defer cancel()
@@ -43,18 +29,6 @@ func (socialMediaRepository *socialMediaRepository) Store(ctx context.Context, s
 	socialMedia.ID = fmt.Sprintf("socialmedia-%s", ID)
 
 	if err = socialMediaRepository.db.WithContext(ctx).Create(&socialMedia).Error; err != nil {
-		return err
-	}
-
-	return
-}
-
-func (socialMediaRepository *socialMediaRepository) GetByID(ctx context.Context, socialMedia *domain.SocialMedia, id string) (err error) {
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-
-	defer cancel()
-
-	if err = socialMediaRepository.db.WithContext(ctx).First(&socialMedia, &id).Error; err != nil {
 		return err
 	}
 
@@ -79,7 +53,7 @@ func (socialMediaRepository *socialMediaRepository) Update(ctx context.Context, 
 	return socmed, nil
 }
 
-func (socialMediaRepository *socialMediaRepository) Delete(ctx context.Context, id string) (err error) {
+func (socialMediaRepository *socialMediaRepository) DeleteById(ctx context.Context, id string) (err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 
 	defer cancel()
@@ -89,6 +63,34 @@ func (socialMediaRepository *socialMediaRepository) Delete(ctx context.Context, 
 	}
 
 	if err = socialMediaRepository.db.WithContext(ctx).Delete(&domain.SocialMedia{}, &id).Error; err != nil {
+		return err
+	}
+
+	return
+}
+
+func (socialMediaRepository *socialMediaRepository) FindAllByUser(ctx context.Context, socialMedias *[]domain.SocialMedia, userID string) (err error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+
+	defer cancel()
+
+	if err = socialMediaRepository.db.WithContext(ctx).Where("user_id = ?", userID).Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("ID", "Email", "Username")
+	}).Find(&socialMedias).Error; err != nil {
+		return err
+	}
+
+	return
+}
+
+func (socialMediaRepository *socialMediaRepository) FindById(ctx context.Context, socialMedia *domain.SocialMedia, id string) (err error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+
+	defer cancel()
+
+	if err = socialMediaRepository.db.WithContext(ctx).Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "username", "email")
+	}).First(&socialMedia, &id).Error; err != nil {
 		return err
 	}
 

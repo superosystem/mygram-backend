@@ -66,43 +66,47 @@ func (commentRepository *commentRepository) DeleteById(ctx context.Context, id s
 	return
 }
 
-func (commentRepository *commentRepository) FindById(ctx context.Context, comment *domain.Comment, id string) (err error) {
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
-
-	if err = commentRepository.db.WithContext(ctx).First(&comment, &id).Error; err != nil {
-		return err
-	}
-
-	return
-}
-
-func (commentRepository *commentRepository) FindByPhoto(ctx context.Context, comments *[]domain.Comment, photoId string) (err error) {
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
-
-	if err = commentRepository.db.WithContext(ctx).Where("photo_id = ?", photoId).Preload("Photo", func(db *gorm.DB) *gorm.DB {
-		return db.Select("id", "user_id", "title", "photo_url", "caption")
-	}).Find(&comments).Error; err != nil {
-		return err
-	}
-
-	return
-}
-
-/*
 func (commentRepository *commentRepository) FindAllByUser(ctx context.Context, comments *[]domain.Comment, userID string) (err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	if err = commentRepository.db.WithContext(ctx).Where("user_id = ?", userID).Preload("User", func(db *gorm.DB) *gorm.DB {
-		return db.Select("id", "email", "username", "profile_image_url")
+		return db.Select("id", "username", "email", "created_at", "updated_at")
 	}).Preload("Photo", func(db *gorm.DB) *gorm.DB {
-		return db.Select("id", "user_id", "title", "photo_url", "caption")
+		return db.Select("id", "title", "caption", "photo_url", "user_id")
 	}).Find(&comments).Error; err != nil {
 		return err
 	}
 
 	return
 }
-*/
+
+func (commentRepository *commentRepository) FindAllByPhoto(ctx context.Context, comments *[]domain.Comment, photoID string) (err error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	if err = commentRepository.db.WithContext(ctx).Where("photo_id = ?", photoID).Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "username", "email", "created_at", "updated_at")
+	}).Preload("Photo", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "title", "caption", "photo_url", "user_id")
+	}).Find(&comments).Error; err != nil {
+		return err
+	}
+
+	return
+}
+
+func (commentRepository *commentRepository) FindById(ctx context.Context, comments *domain.Comment, id string) (err error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	if err = commentRepository.db.WithContext(ctx).Where("id = ?", id).Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "username", "email")
+	}).Preload("Photo", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "title", "caption", "photo_url", "user_id")
+	}).Find(&comments).Error; err != nil {
+		return err
+	}
+
+	return
+}

@@ -21,7 +21,7 @@ func AuthorizationSocialMedia(socialMediaUseCase domain.SocialMediaUseCase) gin.
 		userData := ctx.MustGet("userData").(jwt.MapClaims)
 		userID := string(userData["id"].(string))
 
-		if err = socialMediaUseCase.GetByID(ctx.Request.Context(), &socialMedia, socialMediaID); err != nil {
+		if err = socialMediaUseCase.FindById(ctx.Request.Context(), &socialMedia, socialMediaID); err != nil {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, helpers.ResponseMessage{
 				Status:  "fail",
 				Message: fmt.Sprintf("social media with id %s doesn't exist", socialMediaID),

@@ -8,6 +8,8 @@ definitions:
       photo_id:
         example: photo-123
         type: string
+      userID:
+        type: string
     type: object
   domain.AddPhoto:
     properties:
@@ -21,7 +23,27 @@ definitions:
         example: A Photo Title
         type: string
     type: object
+  domain.AddSocialMedia:
+    properties:
+      name:
+        example: Example
+        type: string
+      social_media_url:
+        example: https://www.example.com/johndoe
+        type: string
+    type: object
   domain.AddedComment:
+    properties:
+      data:
+        $ref: '#/definitions/domain.AddedDataComment'
+      message:
+        example: message you if the process has been successful
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  domain.AddedDataComment:
     properties:
       created_at:
         example: the created at generated here
@@ -32,14 +54,12 @@ definitions:
       message:
         example: A comment
         type: string
-      photo_id:
-        example: here is the generated photo id
-        type: string
-      user_id:
-        example: here is the generated user id
-        type: string
+      photo:
+        $ref: '#/definitions/domain.GetPhoto'
+      user:
+        $ref: '#/definitions/domain.GetUser'
     type: object
-  domain.AddedPhoto:
+  domain.AddedDataPhoto:
     properties:
       caption:
         example: A caption
@@ -55,35 +75,57 @@ definitions:
       title:
         example: A Photo Title
         type: string
+      user:
+        $ref: '#/definitions/domain.GetUser'
+    type: object
+  domain.AddedDataSocialMedia:
+    properties:
+      created_at:
+        example: the created at generated here
+        type: string
+      id:
+        example: the social media id generated here
+        type: string
+      name:
+        example: Example
+        type: string
+      social_media_url:
+        example: https://www.example.com/johndoe
+        type: string
       user_id:
+        example: here is the generated user id
+        type: string
+    type: object
+  domain.AddedPhoto:
+    properties:
+      data:
+        $ref: '#/definitions/domain.AddedDataPhoto'
+      message:
+        example: message you if the process has been successful
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  domain.AddedSocialMedia:
+    properties:
+      data:
+        $ref: '#/definitions/domain.AddedDataSocialMedia'
+      message:
+        example: message you if the process has been successful
+        type: string
+      status:
+        example: success
         type: string
     type: object
   domain.Comment:
-    properties:
-      createdAt:
-        type: string
-      id:
-        type: string
-      message:
-        type: string
-      photo:
-        $ref: '#/definitions/domain.Photo'
-      photoID:
-        type: string
-      updatedAt:
-        type: string
-      user:
-        $ref: '#/definitions/domain.User'
-      userID:
-        type: string
-    type: object
-  domain.GetComment:
     properties:
       created_at:
         type: string
       id:
         type: string
       message:
+        example: A comment
         type: string
       photo:
         $ref: '#/definitions/domain.Photo'
@@ -96,7 +138,95 @@ definitions:
       user_id:
         type: string
     type: object
-  domain.GetPhoto:
+  domain.DeletedComment:
+    properties:
+      message:
+        example: your comment has been successfully deleted
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  domain.DeletedPhoto:
+    properties:
+      message:
+        example: your account has been successfully deleted
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  domain.DeletedSocialMedia:
+    properties:
+      message:
+        example: your social media has been successfully deleted
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  domain.DeletedUser:
+    properties:
+      message:
+        example: your account has been successfully deleted
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  domain.GetAComment:
+    properties:
+      data:
+        $ref: '#/definitions/domain.Comment'
+      message:
+        example: message you if the process has been successful
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  domain.GetAllComments:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/domain.Comment'
+        type: array
+      message:
+        example: message you if the process has been successful
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  domain.GetAllPhotos:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/domain.GetDetailPhoto'
+        type: array
+      message:
+        example: message you if the process has been successful
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  domain.GetByIdPhoto:
+    properties:
+      data:
+        $ref: '#/definitions/domain.GetDetailPhoto'
+      message:
+        example: message you if the process has been successful
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  domain.GetDataSocialMedia:
+    properties:
+      social_medias: {}
+    type: object
+  domain.GetDetailPhoto:
     properties:
       caption:
         type: string
@@ -110,7 +240,18 @@ definitions:
         type: string
       updated_at:
         type: string
-      user_id:
+      user:
+        $ref: '#/definitions/domain.GetUser'
+    type: object
+  domain.GetPhoto:
+    properties:
+      caption:
+        type: string
+      id:
+        type: string
+      photo_url:
+        type: string
+      title:
         type: string
     type: object
   domain.GetUser:
@@ -148,21 +289,19 @@ definitions:
     properties:
       caption:
         type: string
-      comment:
-        $ref: '#/definitions/domain.Comment'
-      createdAt:
+      created_at:
         type: string
       id:
         type: string
-      photoUrl:
+      photo_url:
+        example: https://www.example.com/image.jpg
         type: string
       title:
+        example: A Photo Title
         type: string
-      updatedAt:
+      updated_at:
         type: string
-      user:
-        $ref: '#/definitions/domain.User'
-      userID:
+      user_id:
         type: string
     type: object
   domain.RegisterUser:
@@ -191,100 +330,42 @@ definitions:
         example: success
         type: string
     type: object
-  domain.ResponseAddedComment:
+  domain.ResponseDataFetchedSocialMedia:
     properties:
       data:
-        $ref: '#/definitions/domain.AddedComment'
-      status:
-        example: success
-        type: string
-    type: object
-  domain.ResponseAddedPhoto:
-    properties:
-      data:
-        $ref: '#/definitions/domain.AddedPhoto'
-      status:
-        example: success
-        type: string
-    type: object
-  domain.ResponseDeletedPhoto:
-    properties:
+        $ref: '#/definitions/domain.SocialMedias'
       message:
-        example: your account has been successfully deleted
+        example: message you if the process has been successful
         type: string
       status:
         example: success
         type: string
     type: object
-  domain.ResponseGetAllPhotos:
+  domain.SocialMedia:
     properties:
-      data:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        example: Social Media
+        type: string
+      social_media_url:
+        example: https://www.example.com/social-media
+        type: string
+      updated_at:
+        type: string
+      user:
+        $ref: '#/definitions/domain.User'
+      user_id:
+        type: string
+    type: object
+  domain.SocialMedias:
+    properties:
+      social_medias:
         items:
-          $ref: '#/definitions/domain.GetPhoto'
+          $ref: '#/definitions/domain.SocialMedia'
         type: array
-      status:
-        example: success
-        type: string
-    type: object
-  domain.ResponseGetByIdPhoto:
-    properties:
-      data:
-        $ref: '#/definitions/domain.GetPhoto'
-      status:
-        example: success
-        type: string
-    type: object
-  domain.ResponseGetComment:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/domain.GetComment'
-        type: array
-      status:
-        example: success
-        type: string
-    type: object
-  domain.ResponseMessageDeletedComment:
-    properties:
-      message:
-        example: your comment has been successfully deleted
-        type: string
-      status:
-        example: success
-        type: string
-    type: object
-  domain.ResponseMessageDeletedUser:
-    properties:
-      message:
-        example: your account has been successfully deleted
-        type: string
-      status:
-        example: success
-        type: string
-    type: object
-  domain.ResponseUpdatedComment:
-    properties:
-      data:
-        $ref: '#/definitions/domain.UpdatedComment'
-      status:
-        example: success
-        type: string
-    type: object
-  domain.ResponseUpdatedPhoto:
-    properties:
-      data:
-        $ref: '#/definitions/domain.UpdatedPhoto'
-      status:
-        example: success
-        type: string
-    type: object
-  domain.ResponseUpdatedUser:
-    properties:
-      data:
-        $ref: '#/definitions/domain.UpdatedUser'
-      status:
-        example: success
-        type: string
     type: object
   domain.Token:
     properties:
@@ -296,6 +377,8 @@ definitions:
     properties:
       message:
         example: A new comment
+        type: string
+      userID:
         type: string
     type: object
   domain.UpdatePhoto:
@@ -312,6 +395,15 @@ definitions:
       userID:
         type: string
     type: object
+  domain.UpdateSocialMedia:
+    properties:
+      name:
+        example: New Example
+        type: string
+      social_media_url:
+        example: https://www.newexample.com/johndoe
+        type: string
+    type: object
   domain.UpdateUser:
     properties:
       age:
@@ -326,21 +418,27 @@ definitions:
     type: object
   domain.UpdatedComment:
     properties:
+      data:
+        $ref: '#/definitions/domain.UpdatedDataComment'
+      status:
+        example: success
+        type: string
+    type: object
+  domain.UpdatedDataComment:
+    properties:
       id:
         type: string
       message:
         example: A comment
         type: string
-      photo_id:
-        example: here is the generated photo id
-        type: string
+      photo:
+        $ref: '#/definitions/domain.GetPhoto'
       updated_at:
         type: string
-      user_id:
-        example: here is the generated user id
-        type: string
+      user:
+        $ref: '#/definitions/domain.GetUser'
     type: object
-  domain.UpdatedPhoto:
+  domain.UpdatedDataPhoto:
     properties:
       caption:
         type: string
@@ -352,149 +450,10 @@ definitions:
         type: string
       updated_at:
         type: string
-      user_id:
-        type: string
-    type: object
-  domain.UpdatedUser:
-    properties:
-      age:
-        example: 8
-        type: integer
-      email:
-        example: newjohndoe@example.com
-        type: string
-      id:
-        example: here is the generated user id
-        type: string
-      updated_at:
-        example: update time should be here
-        type: string
-      username:
-        example: newjohndoe
-        type: string
-    type: object
-  domain.User:
-    properties:
-      age:
-        type: integer
-      createdAt:
-        type: string
-      email:
-        type: string
-      id:
-        type: string
-      updatedAt:
-        type: string
-      username:
-        type: string
-    type: object
-  helpers.ResponseMessage:
-    properties:
-      message:
-        type: string
-      status:
-        type: string
-    type: object
-  model.AddSocialMedia:
-    properties:
-      name:
-        example: Example
-        type: string
-      social_media_url:
-        example: https://www.example.com/johndoe
-        type: string
-    type: object
-  model.AddedSocialMedia:
-    properties:
-      created_at:
-        example: the created at generated here
-        type: string
-      id:
-        example: the social media id generated here
-        type: string
-      name:
-        example: Example
-        type: string
-      social_media_url:
-        example: https://www.example.com/johndoe
-        type: string
-      user_id:
-        example: here is the generated user id
-        type: string
-    type: object
-  model.ResponseDataAddedSocialMedia:
-    properties:
-      data:
-        $ref: '#/definitions/model.AddedSocialMedia'
-      status:
-        example: success
-        type: string
-    type: object
-  model.ResponseDataFetchedSocialMedia:
-    properties:
-      data:
-        $ref: '#/definitions/model.SocialMedias'
-      status:
-        example: success
-        type: string
-    type: object
-  model.ResponseDataUpdatedSocialMedia:
-    properties:
-      data:
-        $ref: '#/definitions/model.UpdatedSocialMedia'
-      status:
-        example: success
-        type: string
-    type: object
-  model.ResponseMessageDeletedSocialMedia:
-    properties:
-      message:
-        example: your social media has been successfully deleted
-        type: string
-      status:
-        example: success
-        type: string
-    type: object
-  model.SocialMedia:
-    properties:
-      created_at:
-        example: here is the generated created at
-        type: string
-      id:
-        example: here is the generated social media id
-        type: string
-      name:
-        example: Example
-        type: string
-      social_media_url:
-        example: https://www.example.com/johndoe
-        type: string
-      updated_at:
-        example: here is the generated updated at
-        type: string
       user:
-        $ref: '#/definitions/model.User'
-      user_id:
-        example: here is the generated user id
-        type: string
+        $ref: '#/definitions/domain.GetUser'
     type: object
-  model.SocialMedias:
-    properties:
-      social_medias:
-        items:
-          $ref: '#/definitions/model.SocialMedia'
-        type: array
-    type: object
-  model.UpdateSocialMedia:
-    properties:
-      name:
-        example: New Example
-        type: string
-      social_media_url:
-        example: https://www.newexample.com/johndoe
-        type: string
-    type: object
-  model.UpdatedSocialMedia:
+  domain.UpdatedDataSocialMedia:
     properties:
       id:
         example: here is the generated social media id
@@ -512,16 +471,83 @@ definitions:
         example: here is the generated user id
         type: string
     type: object
-  model.User:
+  domain.UpdatedDataUser:
     properties:
+      age:
+        example: 8
+        type: integer
       email:
-        example: johndoe@example.com
+        example: newjohndoe@example.com
         type: string
       id:
         example: here is the generated user id
         type: string
+      updated_at:
+        example: update time should be here
+        type: string
+      username:
+        example: newjohndoe
+        type: string
+    type: object
+  domain.UpdatedPhoto:
+    properties:
+      data:
+        $ref: '#/definitions/domain.UpdatedDataPhoto'
+      message:
+        example: message you if the process has been successful
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  domain.UpdatedSocialMedia:
+    properties:
+      data:
+        $ref: '#/definitions/domain.UpdatedDataSocialMedia'
+      message:
+        example: message you if the process has been successful
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  domain.UpdatedUser:
+    properties:
+      data:
+        $ref: '#/definitions/domain.UpdatedDataUser'
+      message:
+        example: message you if the process has been successful
+        type: string
+      status:
+        example: success
+        type: string
+    type: object
+  domain.User:
+    properties:
+      age:
+        example: 8
+        type: integer
+      created_at:
+        type: string
+      email:
+        example: johndoe@example.com
+        type: string
+      id:
+        type: string
+      password:
+        example: secret
+        type: string
+      updated_at:
+        type: string
       username:
         example: johndoe
+        type: string
+    type: object
+  helpers.ResponseMessage:
+    properties:
+      message:
+        type: string
+      status:
         type: string
     type: object
 host: localhost:8080
@@ -556,7 +582,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/domain.ResponseAddedComment'
+            $ref: '#/definitions/domain.AddedComment'
         "400":
           description: Bad Request
           schema:
@@ -570,7 +596,7 @@ paths:
       summary: Add a comment
       tags:
       - comment
-  /comment/{id}:
+  /comment/{commentId}:
     delete:
       consumes:
       - application/json
@@ -578,7 +604,7 @@ paths:
       parameters:
       - description: Comment ID
         in: path
-        name: id
+        name: commnetId
         required: true
         type: string
       produces:
@@ -587,7 +613,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.ResponseMessageDeletedComment'
+            $ref: '#/definitions/domain.DeletedComment'
         "400":
           description: Bad Request
           schema:
@@ -603,6 +629,30 @@ paths:
       security:
       - Bearer: []
       summary: Delete a comment
+      tags:
+      - comment
+    get:
+      consumes:
+      - application/json
+      description: Get all comments by photo with authentication user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.GetAComment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Get all by photo comments
       tags:
       - comment
     put:
@@ -627,7 +677,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.ResponseUpdatedComment'
+            $ref: '#/definitions/domain.UpdatedComment'
         "400":
           description: Bad Request
           schema:
@@ -645,7 +695,7 @@ paths:
       summary: Update a comment
       tags:
       - comment
-  /comment/{photoId}:
+  /comment/by-photo/{photoId}:
     get:
       consumes:
       - application/json
@@ -656,7 +706,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.ResponseGetComment'
+            $ref: '#/definitions/domain.GetAllComments'
         "400":
           description: Bad Request
           schema:
@@ -670,6 +720,31 @@ paths:
       summary: Get all by photo comments
       tags:
       - comment
+  /comment/by-user/{photoId}:
+    get:
+      consumes:
+      - application/json
+      description: Get all comments with authentication user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.GetAllComments'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Get all comments
+      tags:
+      - comment
   /photo:
     get:
       consumes:
@@ -681,7 +756,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.ResponseGetAllPhotos'
+            $ref: '#/definitions/domain.GetAllPhotos'
         "400":
           description: Bad Request
           schema:
@@ -690,6 +765,8 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
       summary: Get all photos
       tags:
       - photo
@@ -710,7 +787,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/domain.ResponseAddedPhoto'
+            $ref: '#/definitions/domain.AddedPhoto'
         "400":
           description: Bad Request
           schema:
@@ -741,7 +818,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.ResponseDeletedPhoto'
+            $ref: '#/definitions/domain.DeletedPhoto'
         "400":
           description: Bad Request
           schema:
@@ -769,7 +846,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.ResponseGetByIdPhoto'
+            $ref: '#/definitions/domain.GetByIdPhoto'
         "400":
           description: Bad Request
           schema:
@@ -805,7 +882,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.ResponseUpdatedPhoto'
+            $ref: '#/definitions/domain.UpdatedPhoto'
         "400":
           description: Bad Request
           schema:
@@ -823,7 +900,7 @@ paths:
       summary: Update a photo
       tags:
       - photo
-  /socialmedias:
+  /socialmedia/{socialMediaId}:
     get:
       consumes:
       - application/json
@@ -834,7 +911,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.ResponseDataFetchedSocialMedia'
+            $ref: '#/definitions/domain.ResponseDataFetchedSocialMedia'
         "400":
           description: Bad Request
           schema:
@@ -848,6 +925,32 @@ paths:
       summary: Fetch all social media
       tags:
       - socialmedias
+  /socialmedia/by-user/{userId}:
+    get:
+      consumes:
+      - application/json
+      description: Get all social media with authentication user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.GetDataSocialMedia'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/helpers.ResponseMessage'
+      security:
+      - Bearer: []
+      summary: Fetch all social media
+      tags:
+      - socialmedias
+  /socialmedias:
     post:
       consumes:
       - application/json
@@ -858,14 +961,14 @@ paths:
         name: json
         required: true
         schema:
-          $ref: '#/definitions/model.AddSocialMedia'
+          $ref: '#/definitions/domain.AddSocialMedia'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.ResponseDataAddedSocialMedia'
+            $ref: '#/definitions/domain.AddedSocialMedia'
         "400":
           description: Bad Request
           schema:
@@ -896,7 +999,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.ResponseMessageDeletedSocialMedia'
+            $ref: '#/definitions/domain.DeletedSocialMedia'
         "400":
           description: Bad Request
           schema:
@@ -929,14 +1032,14 @@ paths:
         name: json
         required: true
         schema:
-          $ref: '#/definitions/model.UpdateSocialMedia'
+          $ref: '#/definitions/domain.UpdateSocialMedia'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.ResponseDataUpdatedSocialMedia'
+            $ref: '#/definitions/domain.UpdatedSocialMedia'
         "400":
           description: Bad Request
           schema:
@@ -954,18 +1057,18 @@ paths:
       summary: Update a social media
       tags:
       - socialmedias
-  /user:
+  /user/{userId}:
     delete:
       consumes:
       - application/json
-      description: Delete a user with authentication user
+      description: Delete own user with authentication user
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.ResponseMessageDeletedUser'
+            $ref: '#/definitions/domain.DeletedUser'
         "400":
           description: Bad Request
           schema:
@@ -980,7 +1083,7 @@ paths:
             $ref: '#/definitions/helpers.ResponseMessage'
       security:
       - Bearer: []
-      summary: Delete a user
+      summary: Delete own user
       tags:
       - user
     put:
@@ -1000,7 +1103,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.ResponseUpdatedUser'
+            $ref: '#/definitions/domain.UpdatedUser'
         "400":
           description: Bad Request
           schema:

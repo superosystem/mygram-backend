@@ -22,26 +22,29 @@ func NewCommentHandler(routers *gin.Engine, commentUseCase domain.CommentUseCase
 	router := routers.Group("/api/v1/comment")
 	{
 		router.Use(middleware.Authentication())
-		router.GET("/:photoId", handler.GetByPhoto)
-		router.POST("", handler.Save)
-		router.PUT("/:commentId", middleware.AuthorizationComment(handler.commentUseCase), handler.Update)
+		router.POST("", handler.CreateComment)
+		router.PUT("/:commentId", middleware.AuthorizationComment(handler.commentUseCase), handler.UpdateComment)
 		router.DELETE("/:commentId", middleware.AuthorizationComment(handler.commentUseCase), handler.DeleteById)
+		router.GET("/by-user/:userId", handler.GetAllByUser)
+		router.GET("/by-photo/:photoId", handler.GetAllByPhoto)
+		router.GET("/:commentId", handler.GetOne)
+
 	}
 }
 
-// Save godoc
+// CreateComment godoc
 // @Summary			Add a comment
 // @Description		create and store a comment with authentication user
 // @Tags        	comment
 // @Accept      	json
 // @Produce     	json
 // @Param       	json	body			domain.AddComment true  "Add Comment"
-// @Success     	201		{object}  		domain.ResponseAddedComment
+// @Success     	201		{object}  		domain.AddedComment
 // @Failure     	400		{object}		helpers.ResponseMessage
 // @Failure     	401		{object}		helpers.ResponseMessage
 // @Security    	Bearer
 // @Router      	/comment	[post]
-func (handler *commentHandler) Save(ctx *gin.Context) {
+func (handler *commentHandler) CreateComment(ctx *gin.Context) {
 	var (
 		input   domain.AddComment
 		comment domain.Comment
@@ -49,6 +52,9 @@ func (handler *commentHandler) Save(ctx *gin.Context) {
 		err     error
 	)
 
+	userData := ctx.MustGet("userData").(jwt.MapClaims)
+	userID := string(userData["id"].(string))
+
 	if err = ctx.ShouldBindJSON(&input); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
@@ -58,23 +64,19 @@ func (handler *commentHandler) Save(ctx *gin.Context) {
 		return
 	}
 
-	userData := ctx.MustGet("userData").(jwt.MapClaims)
-	userID := string(userData["id"].(string))
-
-	comment.UserID = userID
-	comment.PhotoID = input.PhotoID
-	comment.Message = input.Message
-
-	if err = handler.photoUseCase.FindById(ctx.Request.Context(), &photo, comment.PhotoID); err != nil {
+	if err = handler.photoUseCase.FindById(ctx.Request.Context(), &photo, input.PhotoID); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusNotFound, helpers.ResponseMessage{
 			Status:  "fail",
-			Message: fmt.Sprintf("photo with id %s doesn't exist", comment.PhotoID),
+			Message: fmt.Sprintf("photo with id %s doesn't exist", input.PhotoID),
 		})
 
 		return
 	}
 
-	if err = handler.commentUseCase.Save(ctx.Request.Context(), &comment); err != nil {
+	input.PhotoID = photo.ID
+	input.UserID = userID
+
+	if comment, err = handler.commentUseCase.Save(ctx.Request.Context(), &input); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: err.Error(),
@@ -83,19 +85,28 @@ func (handler *commentHandler) Save(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, domain.ResponseAddedComment{
+	ctx.JSON(http.StatusCreated, domain.AddedComment{
 		Status: "success",
-		Data: domain.AddedComment{
-			ID:        comment.ID,
-			UserID:    comment.UserID,
-			PhotoID:   comment.PhotoID,
-			Message:   comment.Message,
+		Data: domain.AddedDataComment{
+			ID:      comment.ID,
+			Message: comment.Message,
+			User: &domain.GetUser{
+				ID:       comment.User.ID,
+				Email:    comment.User.Email,
+				Username: comment.User.Username,
+			},
+			Photo: &domain.GetPhoto{
+				ID:       comment.Photo.ID,
+				Title:    comment.Photo.Title,
+				Caption:  comment.Photo.Caption,
+				PhotoUrl: comment.Photo.PhotoUrl,
+			},
 			CreatedAt: comment.CreatedAt,
 		},
 	})
 }
 
-// Update godoc
+// UpdateComment godoc
 // @Summary			Update a comment
 // @Description		Update a comment by id with authentication user
 // @Tags        	comment
@@ -103,18 +114,20 @@ func (handler *commentHandler) Save(ctx *gin.Context) {
 // @Produce     	json
 // @Param       	id		path			string  true  "Comment ID"
 // @Param       	json	body			domain.UpdateComment	true	"Update Comment"
-// @Success     	200		{object}  		domain.ResponseUpdatedComment
+// @Success     	200		{object}  		domain.UpdatedComment
 // @Failure     	400		{object}		helpers.ResponseMessage
 // @Failure     	401		{object}		helpers.ResponseMessage
 // @Failure     	404		{object}		helpers.ResponseMessage
 // @Security    	Bearer
-// @Router      	/comment/{id}	[put]
-func (handler *commentHandler) Update(ctx *gin.Context) {
+// @Router      	/comment/{commentId}	[put]
+func (handler *commentHandler) UpdateComment(ctx *gin.Context) {
 	var (
 		input   domain.UpdateComment
 		comment domain.Comment
 		err     error
 	)
+
+	commentID := ctx.Param("commentId")
 
 	if err = ctx.ShouldBindJSON(&input); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
@@ -124,14 +137,12 @@ func (handler *commentHandler) Update(ctx *gin.Context) {
 		return
 	}
 
-	commentID := ctx.Param("commentId")
 	userData := ctx.MustGet("userData").(jwt.MapClaims)
 	userID := string(userData["id"].(string))
 
-	comment.UserID = userID
-	comment.Message = input.Message
+	input.UserID = userID
 
-	if comment, err = handler.commentUseCase.Update(ctx.Request.Context(), comment, commentID); err != nil {
+	if comment, err = handler.commentUseCase.Update(ctx.Request.Context(), input, commentID); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: err.Error(),
@@ -139,13 +150,22 @@ func (handler *commentHandler) Update(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, domain.ResponseUpdatedComment{
+	ctx.JSON(http.StatusOK, domain.UpdatedComment{
 		Status: "success",
-		Data: domain.UpdatedComment{
-			ID:        comment.ID,
-			Message:   comment.Message,
-			UserID:    comment.UserID,
-			PhotoID:   comment.PhotoID,
+		Data: domain.UpdatedDataComment{
+			ID:      comment.ID,
+			Message: comment.Message,
+			User: &domain.GetUser{
+				ID:       comment.User.ID,
+				Email:    comment.User.Email,
+				Username: comment.User.Username,
+			},
+			Photo: &domain.GetPhoto{
+				ID:       comment.Photo.ID,
+				Title:    comment.Photo.Title,
+				Caption:  comment.Photo.Caption,
+				PhotoUrl: comment.Photo.PhotoUrl,
+			},
 			UpdatedAt: comment.UpdatedAt,
 		},
 	})
@@ -157,13 +177,13 @@ func (handler *commentHandler) Update(ctx *gin.Context) {
 // @Tags        comment
 // @Accept      json
 // @Produce     json
-// @Param       id  path				string	true	"Comment ID"
-// @Success     200 {object}			domain.ResponseMessageDeletedComment
+// @Param       commnetId  path				string	true	"Comment ID"
+// @Success     200 {object}			domain.DeletedComment
 // @Failure     400 {object}			helpers.ResponseMessage
 // @Failure     401	{object}			helpers.ResponseMessage
 // @Failure     404	{object}			helpers.ResponseMessage
 // @Security    Bearer
-// @Router      /comment/{id}	[delete]
+// @Router      /comment/{commentId}	[delete]
 func (handler *commentHandler) DeleteById(ctx *gin.Context) {
 	commentID := ctx.Param("commentId")
 
@@ -172,12 +192,54 @@ func (handler *commentHandler) DeleteById(ctx *gin.Context) {
 			Status:  "fail",
 			Message: err.Error(),
 		})
-
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"message": "your comment has been successfully deleted",
+	ctx.JSON(http.StatusOK, domain.DeletedComment{
+		Status:  "success",
+		Message: "your comment has been successfully deleted",
+	})
+}
+
+// GetAllByUser godoc
+// @Summary			Get all comments
+// @Description		Get all comments with authentication user
+// @Tags        	comment
+// @Accept      	json
+// @Produce     	json
+// @Success     	200	{object}	domain.GetAllComments
+// @Failure     	400	{object}	helpers.ResponseMessage
+// @Failure     	401	{object}	helpers.ResponseMessage
+// @Security    	Bearer
+// @Router      	/comment/by-user/{photoId}	[get]
+func (handler *commentHandler) GetAllByUser(ctx *gin.Context) {
+	var (
+		comments []domain.Comment
+		err      error
+	)
+
+	userID := ctx.Param("userId")
+
+	if err = handler.commentUseCase.FindAllByUser(ctx.Request.Context(), &comments, userID); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
+			Status:  "fail",
+			Message: err.Error(),
+		})
+		return
+	}
+
+	if len(comments) < 1 {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
+			Status:  "fail",
+			Message: "comments is empty",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, domain.GetAllComments{
+		Status:  "success",
+		Message: "get all comments by user",
+		Data:    comments,
 	})
 }
 
@@ -187,12 +249,12 @@ func (handler *commentHandler) DeleteById(ctx *gin.Context) {
 // @Tags        	comment
 // @Accept      	json
 // @Produce     	json
-// @Success     	200	{object}	domain.ResponseGetComment
+// @Success     	200	{object}	domain.GetAllComments
 // @Failure     	400	{object}	helpers.ResponseMessage
 // @Failure     	401	{object}	helpers.ResponseMessage
 // @Security    	Bearer
-// @Router      	/comment/{photoId}     [get]
-func (handler *commentHandler) GetByPhoto(ctx *gin.Context) {
+// @Router      	/comment/by-photo/{photoId}     [get]
+func (handler *commentHandler) GetAllByPhoto(ctx *gin.Context) {
 	var (
 		comments []domain.Comment
 		err      error
@@ -200,55 +262,59 @@ func (handler *commentHandler) GetByPhoto(ctx *gin.Context) {
 
 	photoID := ctx.Param("photoId")
 
-	if err = handler.commentUseCase.FindByPhoto(ctx.Request.Context(), &comments, photoID); err != nil {
+	if err = handler.commentUseCase.FindAllByPhoto(ctx.Request.Context(), &comments, photoID); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: err.Error(),
 		})
-
 		return
 	}
 
-	ctx.JSON(http.StatusOK, helpers.ResponseData{
-		Status: "success",
-		Data:   comments,
+	if len(comments) < 1 {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
+			Status:  "fail",
+			Message: "comments is empty",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, domain.GetAllComments{
+		Status:  "success",
+		Message: "get all comments by photo",
+		Data:    comments,
 	})
 }
 
-/*
-// Fetch godoc
-// @Summary			Fetch all comments
-// @Description		Get all comments with authentication user
+// Find By Id godoc
+// @Summary			Get all by photo comments
+// @Description		Get all comments by photo with authentication user
 // @Tags        	comment
 // @Accept      	json
 // @Produce     	json
-// @Success     	200	{object}	domain.ResponseDataFetchedComment
+// @Success     	200	{object}	domain.GetAComment
 // @Failure     	400	{object}	helpers.ResponseMessage
 // @Failure     	401	{object}	helpers.ResponseMessage
 // @Security    	Bearer
-// @Router      	/comment     [get]
-func (handler *commentHandler) Fetch(ctx *gin.Context) {
+// @Router      	/comment/{commentId}     [get]
+func (handler *commentHandler) GetOne(ctx *gin.Context) {
 	var (
-		comments []domain.Comment
-
-		err error
+		comment domain.Comment
+		err     error
 	)
 
-	userData := ctx.MustGet("userData").(jwt.MapClaims)
-	userID := string(userData["id"].(string))
+	commentID := ctx.Param("commentId")
 
-	if err = handler.commentUseCase.Fetch(ctx.Request.Context(), &comments, userID); err != nil {
+	if err = handler.commentUseCase.FindById(ctx.Request.Context(), &comment, commentID); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: err.Error(),
 		})
-
 		return
 	}
 
-	ctx.JSON(http.StatusOK, helpers.ResponseData{
-		Status: "success",
-		Data:   comments,
+	ctx.JSON(http.StatusOK, domain.GetAComment{
+		Status:  "success",
+		Message: "get comment by id",
+		Data:    comment,
 	})
 }
-*/

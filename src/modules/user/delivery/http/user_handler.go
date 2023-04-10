@@ -155,12 +155,12 @@ func (handler *userHandler) Login(ctx *gin.Context) {
 // @Accept			json
 // @Produce			json
 // @Param			json		body			domain.UpdateUser   true  "Update User"
-// @Success			200			{object}  		domain.ResponseUpdatedUser
+// @Success			200			{object}  		domain.UpdatedUser
 // @Failure			400			{object}		helpers.ResponseMessage
 // @Failure			401			{object}		helpers.ResponseMessage
 // @Failure			409			{object}		helpers.ResponseMessage
 // @Security		Bearer
-// @Router			/user	[put]
+// @Router			/user/{userId}	[put]
 func (handler *userHandler) Update(ctx *gin.Context) {
 	var (
 		input domain.UpdateUser
@@ -203,9 +203,10 @@ func (handler *userHandler) Update(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, helpers.ResponseData{
-		Status: "success",
-		Data: domain.UpdatedUser{
+	ctx.JSON(http.StatusOK, domain.UpdatedUser{
+		Status:  "success",
+		Message: "update user successfully",
+		Data: domain.UpdatedDataUser{
 			ID:        user.ID,
 			Email:     user.Email,
 			Username:  user.Username,
@@ -215,18 +216,18 @@ func (handler *userHandler) Update(ctx *gin.Context) {
 	})
 }
 
-// Delete By Idgodoc
+// Delete godoc
 // @Summary			Delete own user
 // @Description		Delete own user with authentication user
 // @Tags			user
 // @Accept			json
 // @Produce			json
-// @Success			200			{object}	domain.ResponseMessageDeletedUser
+// @Success			200			{object}	domain.DeletedUser
 // @Failure			400			{object}	helpers.ResponseMessage
 // @Failure			401			{object}	helpers.ResponseMessage
 // @Failure			404			{object}	helpers.ResponseMessage
 // @Security		Bearer
-// @Router			/user	[delete]
+// @Router			/user/{userId}	[delete]
 func (handler *userHandler) Delete(ctx *gin.Context) {
 	userData := ctx.MustGet("userData").(jwt.MapClaims)
 	userID := string(userData["id"].(string))

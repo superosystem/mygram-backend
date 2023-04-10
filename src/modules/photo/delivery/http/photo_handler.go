@@ -20,10 +20,10 @@ func NewPhotoHandler(routers *gin.Engine, photoUseCase domain.PhotoUseCase) {
 	router := routers.Group("/api/v1/photo")
 	{
 		router.Use(middleware.Authentication())
-		router.GET("", handler.GetAll)
 		router.POST("", handler.Create)
 		router.PUT("/:photoId", middleware.AuthorizationPhoto(handler.photoUseCase), handler.Update)
 		router.DELETE("/:photoId", middleware.AuthorizationPhoto(handler.photoUseCase), handler.DeleteById)
+		router.GET("", handler.GetAll)
 		router.GET("/:photoId", handler.GetById)
 	}
 }
@@ -197,10 +197,10 @@ func (handler *photoHandler) GetAll(ctx *gin.Context) {
 		return
 	}
 
-	fetchedPhotos := []*domain.GetPhoto{}
+	fetchedPhotos := []*domain.GetDetailPhoto{}
 
 	for _, photo := range photos {
-		fetchedPhotos = append(fetchedPhotos, &domain.GetPhoto{
+		fetchedPhotos = append(fetchedPhotos, &domain.GetDetailPhoto{
 			ID:       photo.ID,
 			Title:    photo.Title,
 			Caption:  photo.Caption,
@@ -215,9 +215,10 @@ func (handler *photoHandler) GetAll(ctx *gin.Context) {
 		})
 	}
 
-	ctx.JSON(http.StatusOK, helpers.ResponseData{
-		Status: "success",
-		Data:   fetchedPhotos,
+	ctx.JSON(http.StatusOK, domain.GetAllPhotos{
+		Status:  "success",
+		Message: "get all photos",
+		Data:    fetchedPhotos,
 	})
 }
 
@@ -227,7 +228,7 @@ func (handler *photoHandler) GetAll(ctx *gin.Context) {
 // @Tags        photo
 // @Accept      json
 // @Produce     json
-// @Success     200			{object}	domain.ResponseGetByIdPhoto
+// @Success     200			{object}	domain.GetByIdPhoto
 // @Failure     400			{object}	helpers.ResponseMessage
 // @Failure     401			{object}	helpers.ResponseMessage
 // @Security    Bearer
@@ -249,8 +250,9 @@ func (handler *photoHandler) GetById(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, domain.GetByIdPhoto{
-		Status: "success",
-		Data: domain.GetPhoto{
+		Status:  "success",
+		Message: "get detail photo",
+		Data: domain.GetDetailPhoto{
 			ID:       photo.ID,
 			Title:    photo.Title,
 			Caption:  photo.Caption,

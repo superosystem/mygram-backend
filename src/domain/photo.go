@@ -9,15 +9,15 @@ import (
 )
 
 type Photo struct {
-	ID        string     `gorm:"primaryKey;type:VARCHAR(50)"`
-	Title     string     `gorm:"type:VARCHAR(50);not null" valid:"required" `
-	Caption   string     `gorm:"type:VARCHAR(50)"`
-	PhotoUrl  string     `gorm:"not null" valid:"required"`
-	UserID    string     `gorm:"type:VARCHAR(50);not null"`
-	User      *User      `gorm:"foreignKey:UserID;constraint:onUpdate:CASCADE,onDelete:CASCADE"`
-	CreatedAt *time.Time `gorm:"not null;autoCreateTime"`
-	UpdatedAt *time.Time `gorm:"not null;autoCreateTime"`
-	Comment   *Comment
+	ID        string     `gorm:"primaryKey;type:VARCHAR(50)" json:"id"`
+	Title     string     `gorm:"type:VARCHAR(50);not null" valid:"required" form:"title" json:"title" example:"A Photo Title"`
+	Caption   string     `form:"caption" json:"caption"`
+	PhotoUrl  string     `gorm:"not null" valid:"required" form:"photo_url" json:"photo_url" example:"https://www.example.com/image.jpg"`
+	UserID    string     `gorm:"type:VARCHAR(50);not null" json:"user_id"`
+	User      *User      `gorm:"foreignKey:UserID;constraint:onUpdate:CASCADE,onDelete:CASCADE" json:"-"`
+	CreatedAt *time.Time `gorm:"not null;autoCreateTime" json:"created_at,omitempty"`
+	UpdatedAt *time.Time `gorm:"not null;autoCreateTime" json:"updated_at,omitempty"`
+	Comment   *Comment   `json:"-"`
 }
 
 func (photo *Photo) BeforeCreate(db *gorm.DB) (err error) {
@@ -108,6 +108,14 @@ type DeletedPhoto struct {
 
 // RepresentGetPhoto
 type GetPhoto struct {
+	ID       string `json:"id"`
+	Title    string `json:"title,"`
+	Caption  string `json:"caption"`
+	PhotoUrl string `json:"photo_url"`
+}
+
+// RepresentGetDetailPhoto
+type GetDetailPhoto struct {
 	ID        string     `json:"id"`
 	Title     string     `json:"title,"`
 	Caption   string     `json:"caption"`
@@ -118,11 +126,13 @@ type GetPhoto struct {
 }
 
 type GetAllPhotos struct {
-	Status string     `json:"status" example:"success"`
-	Data   []GetPhoto `json:"data"`
+	Status  string            `json:"status" example:"success"`
+	Message string            `json:"message" example:"message you if the process has been successful"`
+	Data    []*GetDetailPhoto `json:"data"`
 }
 
 type GetByIdPhoto struct {
-	Status string   `json:"status" example:"success"`
-	Data   GetPhoto `json:"data"`
+	Status  string         `json:"status" example:"success"`
+	Message string         `json:"message" example:"message you if the process has been successful"`
+	Data    GetDetailPhoto `json:"data"`
 }

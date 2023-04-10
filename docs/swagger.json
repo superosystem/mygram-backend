@@ -49,7 +49,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.ResponseAddedComment"
+                            "$ref": "#/definitions/domain.AddedComment"
                         }
                     },
                     "400": {
@@ -67,7 +67,125 @@
                 }
             }
         },
-        "/comment/{id}": {
+        "/comment/by-photo/{photoId}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get all comments by photo with authentication user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "Get all by photo comments",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetAllComments"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/comment/by-user/{photoId}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get all comments with authentication user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "Get all comments",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetAllComments"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/comment/{commentId}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get all comments by photo with authentication user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "Get all by photo comments",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.GetAComment"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    }
+                }
+            },
             "put": {
                 "security": [
                     {
@@ -107,7 +225,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.ResponseUpdatedComment"
+                            "$ref": "#/definitions/domain.UpdatedComment"
                         }
                     },
                     "400": {
@@ -151,7 +269,7 @@
                     {
                         "type": "string",
                         "description": "Comment ID",
-                        "name": "id",
+                        "name": "commnetId",
                         "in": "path",
                         "required": true
                     }
@@ -160,7 +278,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.ResponseMessageDeletedComment"
+                            "$ref": "#/definitions/domain.DeletedComment"
                         }
                     },
                     "400": {
@@ -184,48 +302,13 @@
                 }
             }
         },
-        "/comment/{photoId}": {
+        "/photo": {
             "get": {
                 "security": [
                     {
                         "Bearer": []
                     }
                 ],
-                "description": "Get all comments by photo with authentication user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "comment"
-                ],
-                "summary": "Get all by photo comments",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.ResponseGetComment"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/helpers.ResponseMessage"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/helpers.ResponseMessage"
-                        }
-                    }
-                }
-            }
-        },
-        "/photo": {
-            "get": {
                 "description": "Get all photos",
                 "consumes": [
                     "application/json"
@@ -241,7 +324,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.ResponseGetAllPhotos"
+                            "$ref": "#/definitions/domain.GetAllPhotos"
                         }
                     },
                     "400": {
@@ -290,7 +373,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.ResponseAddedPhoto"
+                            "$ref": "#/definitions/domain.AddedPhoto"
                         }
                     },
                     "400": {
@@ -330,7 +413,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.ResponseGetByIdPhoto"
+                            "$ref": "#/definitions/domain.GetByIdPhoto"
                         }
                     },
                     "400": {
@@ -386,7 +469,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.ResponseUpdatedPhoto"
+                            "$ref": "#/definitions/domain.UpdatedPhoto"
                         }
                     },
                     "400": {
@@ -439,7 +522,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.ResponseDeletedPhoto"
+                            "$ref": "#/definitions/domain.DeletedPhoto"
                         }
                     },
                     "400": {
@@ -463,7 +546,7 @@
                 }
             }
         },
-        "/socialmedias": {
+        "/socialmedia/by-user/{userId}": {
             "get": {
                 "security": [
                     {
@@ -485,7 +568,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseDataFetchedSocialMedia"
+                            "$ref": "#/definitions/domain.GetDataSocialMedia"
                         }
                     },
                     "400": {
@@ -501,7 +584,49 @@
                         }
                     }
                 }
-            },
+            }
+        },
+        "/socialmedia/{socialMediaId}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get all social media with authentication user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "socialmedias"
+                ],
+                "summary": "Fetch all social media",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ResponseDataFetchedSocialMedia"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/socialmedias": {
             "post": {
                 "security": [
                     {
@@ -526,7 +651,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.AddSocialMedia"
+                            "$ref": "#/definitions/domain.AddSocialMedia"
                         }
                     }
                 ],
@@ -534,7 +659,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseDataAddedSocialMedia"
+                            "$ref": "#/definitions/domain.AddedSocialMedia"
                         }
                     },
                     "400": {
@@ -584,7 +709,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UpdateSocialMedia"
+                            "$ref": "#/definitions/domain.UpdateSocialMedia"
                         }
                     }
                 ],
@@ -592,7 +717,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseDataUpdatedSocialMedia"
+                            "$ref": "#/definitions/domain.UpdatedSocialMedia"
                         }
                     },
                     "400": {
@@ -645,108 +770,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.ResponseMessageDeletedSocialMedia"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/helpers.ResponseMessage"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/helpers.ResponseMessage"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/helpers.ResponseMessage"
-                        }
-                    }
-                }
-            }
-        },
-        "/user": {
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "Update a user with authentication user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Update a user",
-                "parameters": [
-                    {
-                        "description": "Update User",
-                        "name": "json",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.UpdateUser"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.ResponseUpdatedUser"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/helpers.ResponseMessage"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/helpers.ResponseMessage"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/helpers.ResponseMessage"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "Delete a user with authentication user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Delete a user",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.ResponseMessageDeletedUser"
+                            "$ref": "#/definitions/domain.DeletedSocialMedia"
                         }
                     },
                     "400": {
@@ -861,6 +885,107 @@
                     }
                 }
             }
+        },
+        "/user/{userId}": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Update a user with authentication user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Update a user",
+                "parameters": [
+                    {
+                        "description": "Update User",
+                        "name": "json",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.UpdateUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.UpdatedUser"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Delete own user with authentication user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Delete own user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.DeletedUser"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/helpers.ResponseMessage"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -874,6 +999,9 @@
                 "photo_id": {
                     "type": "string",
                     "example": "photo-123"
+                },
+                "userID": {
+                    "type": "string"
                 }
             }
         },
@@ -894,7 +1022,36 @@
                 }
             }
         },
+        "domain.AddSocialMedia": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "Example"
+                },
+                "social_media_url": {
+                    "type": "string",
+                    "example": "https://www.example.com/johndoe"
+                }
+            }
+        },
         "domain.AddedComment": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.AddedDataComment"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "message you if the process has been successful"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.AddedDataComment": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -909,17 +1066,15 @@
                     "type": "string",
                     "example": "A comment"
                 },
-                "photo_id": {
-                    "type": "string",
-                    "example": "here is the generated photo id"
+                "photo": {
+                    "$ref": "#/definitions/domain.GetPhoto"
                 },
-                "user_id": {
-                    "type": "string",
-                    "example": "here is the generated user id"
+                "user": {
+                    "$ref": "#/definitions/domain.GetUser"
                 }
             }
         },
-        "domain.AddedPhoto": {
+        "domain.AddedDataPhoto": {
             "type": "object",
             "properties": {
                 "caption": {
@@ -941,41 +1096,69 @@
                     "type": "string",
                     "example": "A Photo Title"
                 },
+                "user": {
+                    "$ref": "#/definitions/domain.GetUser"
+                }
+            }
+        },
+        "domain.AddedDataSocialMedia": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "the created at generated here"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "the social media id generated here"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Example"
+                },
+                "social_media_url": {
+                    "type": "string",
+                    "example": "https://www.example.com/johndoe"
+                },
                 "user_id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "here is the generated user id"
+                }
+            }
+        },
+        "domain.AddedPhoto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.AddedDataPhoto"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "message you if the process has been successful"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.AddedSocialMedia": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.AddedDataSocialMedia"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "message you if the process has been successful"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
                 }
             }
         },
         "domain.Comment": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "photo": {
-                    "$ref": "#/definitions/domain.Photo"
-                },
-                "photoID": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/domain.User"
-                },
-                "userID": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.GetComment": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -985,7 +1168,8 @@
                     "type": "string"
                 },
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "A comment"
                 },
                 "photo": {
                     "$ref": "#/definitions/domain.Photo"
@@ -1004,7 +1188,135 @@
                 }
             }
         },
-        "domain.GetPhoto": {
+        "domain.DeletedComment": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "your comment has been successfully deleted"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.DeletedPhoto": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "your account has been successfully deleted"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.DeletedSocialMedia": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "your social media has been successfully deleted"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.DeletedUser": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "your account has been successfully deleted"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.GetAComment": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.Comment"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "message you if the process has been successful"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.GetAllComments": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.Comment"
+                    }
+                },
+                "message": {
+                    "type": "string",
+                    "example": "message you if the process has been successful"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.GetAllPhotos": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/domain.GetDetailPhoto"
+                    }
+                },
+                "message": {
+                    "type": "string",
+                    "example": "message you if the process has been successful"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.GetByIdPhoto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.GetDetailPhoto"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "message you if the process has been successful"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.GetDataSocialMedia": {
+            "type": "object",
+            "properties": {
+                "social_medias": {}
+            }
+        },
+        "domain.GetDetailPhoto": {
             "type": "object",
             "properties": {
                 "caption": {
@@ -1025,7 +1337,24 @@
                 "updated_at": {
                     "type": "string"
                 },
-                "user_id": {
+                "user": {
+                    "$ref": "#/definitions/domain.GetUser"
+                }
+            }
+        },
+        "domain.GetPhoto": {
+            "type": "object",
+            "properties": {
+                "caption": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "photo_url": {
+                    "type": "string"
+                },
+                "title": {
                     "type": "string"
                 }
             }
@@ -1081,28 +1410,24 @@
                 "caption": {
                     "type": "string"
                 },
-                "comment": {
-                    "$ref": "#/definitions/domain.Comment"
-                },
-                "createdAt": {
+                "created_at": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
-                "photoUrl": {
-                    "type": "string"
+                "photo_url": {
+                    "type": "string",
+                    "example": "https://www.example.com/image.jpg"
                 },
                 "title": {
+                    "type": "string",
+                    "example": "A Photo Title"
+                },
+                "updated_at": {
                     "type": "string"
                 },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/domain.User"
-                },
-                "userID": {
+                "user_id": {
                     "type": "string"
                 }
             }
@@ -1144,36 +1469,15 @@
                 }
             }
         },
-        "domain.ResponseAddedComment": {
+        "domain.ResponseDataFetchedSocialMedia": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/domain.AddedComment"
+                    "$ref": "#/definitions/domain.SocialMedias"
                 },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "domain.ResponseAddedPhoto": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/domain.AddedPhoto"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "domain.ResponseDeletedPhoto": {
-            "type": "object",
-            "properties": {
                 "message": {
                     "type": "string",
-                    "example": "your account has been successfully deleted"
+                    "example": "message you if the process has been successful"
                 },
                 "status": {
                     "type": "string",
@@ -1181,107 +1485,42 @@
                 }
             }
         },
-        "domain.ResponseGetAllPhotos": {
+        "domain.SocialMedia": {
             "type": "object",
             "properties": {
-                "data": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Social Media"
+                },
+                "social_media_url": {
+                    "type": "string",
+                    "example": "https://www.example.com/social-media"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/domain.User"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.SocialMedias": {
+            "type": "object",
+            "properties": {
+                "social_medias": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/domain.GetPhoto"
+                        "$ref": "#/definitions/domain.SocialMedia"
                     }
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "domain.ResponseGetByIdPhoto": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/domain.GetPhoto"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "domain.ResponseGetComment": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.GetComment"
-                    }
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "domain.ResponseMessageDeletedComment": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "your comment has been successfully deleted"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "domain.ResponseMessageDeletedUser": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "your account has been successfully deleted"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "domain.ResponseUpdatedComment": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/domain.UpdatedComment"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "domain.ResponseUpdatedPhoto": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/domain.UpdatedPhoto"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "domain.ResponseUpdatedUser": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/domain.UpdatedUser"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
                 }
             }
         },
@@ -1300,6 +1539,9 @@
                 "message": {
                     "type": "string",
                     "example": "A new comment"
+                },
+                "userID": {
+                    "type": "string"
                 }
             }
         },
@@ -1323,6 +1565,19 @@
                 }
             }
         },
+        "domain.UpdateSocialMedia": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "New Example"
+                },
+                "social_media_url": {
+                    "type": "string",
+                    "example": "https://www.newexample.com/johndoe"
+                }
+            }
+        },
         "domain.UpdateUser": {
             "type": "object",
             "properties": {
@@ -1343,6 +1598,18 @@
         "domain.UpdatedComment": {
             "type": "object",
             "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.UpdatedDataComment"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.UpdatedDataComment": {
+            "type": "object",
+            "properties": {
                 "id": {
                     "type": "string"
                 },
@@ -1350,20 +1617,18 @@
                     "type": "string",
                     "example": "A comment"
                 },
-                "photo_id": {
-                    "type": "string",
-                    "example": "here is the generated photo id"
+                "photo": {
+                    "$ref": "#/definitions/domain.GetPhoto"
                 },
                 "updated_at": {
                     "type": "string"
                 },
-                "user_id": {
-                    "type": "string",
-                    "example": "here is the generated user id"
+                "user": {
+                    "$ref": "#/definitions/domain.GetUser"
                 }
             }
         },
-        "domain.UpdatedPhoto": {
+        "domain.UpdatedDataPhoto": {
             "type": "object",
             "properties": {
                 "caption": {
@@ -1381,214 +1646,12 @@
                 "updated_at": {
                     "type": "string"
                 },
-                "user_id": {
-                    "type": "string"
-                }
-            }
-        },
-        "domain.UpdatedUser": {
-            "type": "object",
-            "properties": {
-                "age": {
-                    "type": "integer",
-                    "example": 8
-                },
-                "email": {
-                    "type": "string",
-                    "example": "newjohndoe@example.com"
-                },
-                "id": {
-                    "type": "string",
-                    "example": "here is the generated user id"
-                },
-                "updated_at": {
-                    "type": "string",
-                    "example": "update time should be here"
-                },
-                "username": {
-                    "type": "string",
-                    "example": "newjohndoe"
-                }
-            }
-        },
-        "domain.User": {
-            "type": "object",
-            "properties": {
-                "age": {
-                    "type": "integer"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "helpers.ResponseMessage": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.AddSocialMedia": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string",
-                    "example": "Example"
-                },
-                "social_media_url": {
-                    "type": "string",
-                    "example": "https://www.example.com/johndoe"
-                }
-            }
-        },
-        "model.AddedSocialMedia": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string",
-                    "example": "the created at generated here"
-                },
-                "id": {
-                    "type": "string",
-                    "example": "the social media id generated here"
-                },
-                "name": {
-                    "type": "string",
-                    "example": "Example"
-                },
-                "social_media_url": {
-                    "type": "string",
-                    "example": "https://www.example.com/johndoe"
-                },
-                "user_id": {
-                    "type": "string",
-                    "example": "here is the generated user id"
-                }
-            }
-        },
-        "model.ResponseDataAddedSocialMedia": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/model.AddedSocialMedia"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "model.ResponseDataFetchedSocialMedia": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/model.SocialMedias"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "model.ResponseDataUpdatedSocialMedia": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/model.UpdatedSocialMedia"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "model.ResponseMessageDeletedSocialMedia": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "your social media has been successfully deleted"
-                },
-                "status": {
-                    "type": "string",
-                    "example": "success"
-                }
-            }
-        },
-        "model.SocialMedia": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string",
-                    "example": "here is the generated created at"
-                },
-                "id": {
-                    "type": "string",
-                    "example": "here is the generated social media id"
-                },
-                "name": {
-                    "type": "string",
-                    "example": "Example"
-                },
-                "social_media_url": {
-                    "type": "string",
-                    "example": "https://www.example.com/johndoe"
-                },
-                "updated_at": {
-                    "type": "string",
-                    "example": "here is the generated updated at"
-                },
                 "user": {
-                    "$ref": "#/definitions/model.User"
-                },
-                "user_id": {
-                    "type": "string",
-                    "example": "here is the generated user id"
+                    "$ref": "#/definitions/domain.GetUser"
                 }
             }
         },
-        "model.SocialMedias": {
-            "type": "object",
-            "properties": {
-                "social_medias": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.SocialMedia"
-                    }
-                }
-            }
-        },
-        "model.UpdateSocialMedia": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string",
-                    "example": "New Example"
-                },
-                "social_media_url": {
-                    "type": "string",
-                    "example": "https://www.newexample.com/johndoe"
-                }
-            }
-        },
-        "model.UpdatedSocialMedia": {
+        "domain.UpdatedDataSocialMedia": {
             "type": "object",
             "properties": {
                 "id": {
@@ -1613,20 +1676,117 @@
                 }
             }
         },
-        "model.User": {
+        "domain.UpdatedDataUser": {
             "type": "object",
             "properties": {
+                "age": {
+                    "type": "integer",
+                    "example": 8
+                },
                 "email": {
                     "type": "string",
-                    "example": "johndoe@example.com"
+                    "example": "newjohndoe@example.com"
                 },
                 "id": {
                     "type": "string",
                     "example": "here is the generated user id"
                 },
+                "updated_at": {
+                    "type": "string",
+                    "example": "update time should be here"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "newjohndoe"
+                }
+            }
+        },
+        "domain.UpdatedPhoto": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.UpdatedDataPhoto"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "message you if the process has been successful"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.UpdatedSocialMedia": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.UpdatedDataSocialMedia"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "message you if the process has been successful"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.UpdatedUser": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/domain.UpdatedDataUser"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "message you if the process has been successful"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "success"
+                }
+            }
+        },
+        "domain.User": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer",
+                    "example": 8
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "johndoe@example.com"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "secret"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
                 "username": {
                     "type": "string",
                     "example": "johndoe"
+                }
+            }
+        },
+        "helpers.ResponseMessage": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         }

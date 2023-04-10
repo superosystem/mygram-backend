@@ -34,17 +34,74 @@ func (s *SocialMedia) BeforeUpdate(db *gorm.DB) (err error) {
 }
 
 type SocialMediaUseCase interface {
-	Fetch(context.Context, *[]SocialMedia, string) error
-	Store(context.Context, *SocialMedia) error
-	GetByID(context.Context, *SocialMedia, string) error
+	Save(context.Context, *SocialMedia) error
 	Update(context.Context, SocialMedia, string) (SocialMedia, error)
-	Delete(context.Context, string) error
+	DeleteById(context.Context, string) error
+	FindAllByUser(context.Context, *[]SocialMedia, string) error
+	FindById(context.Context, *SocialMedia, string) error
 }
 
 type SocialMediaRepository interface {
-	Fetch(context.Context, *[]SocialMedia, string) error
-	Store(context.Context, *SocialMedia) error
-	GetByID(context.Context, *SocialMedia, string) error
+	Save(context.Context, *SocialMedia) error
 	Update(context.Context, SocialMedia, string) (SocialMedia, error)
-	Delete(context.Context, string) error
+	DeleteById(context.Context, string) error
+	FindAllByUser(context.Context, *[]SocialMedia, string) error
+	FindById(context.Context, *SocialMedia, string) error
+}
+
+type AddSocialMedia struct {
+	Name           string `json:"name" example:"Example"`
+	SocialMediaUrl string `json:"social_media_url" example:"https://www.example.com/johndoe"`
+}
+
+type AddedDataSocialMedia struct {
+	ID             string     `json:"id" example:"the social media id generated here"`
+	Name           string     `json:"name" example:"Example"`
+	SocialMediaUrl string     `json:"social_media_url" example:"https://www.example.com/johndoe"`
+	UserID         string     `json:"user_id" example:"here is the generated user id"`
+	CreatedAt      *time.Time `json:"created_at" example:"the created at generated here"`
+}
+
+type AddedSocialMedia struct {
+	Status  string               `json:"status" example:"success"`
+	Message string               `json:"message" example:"message you if the process has been successful"`
+	Data    AddedDataSocialMedia `json:"data"`
+}
+
+type UpdateSocialMedia struct {
+	Name           string `json:"name" example:"New Example"`
+	SocialMediaUrl string `json:"social_media_url" example:"https://www.newexample.com/johndoe"`
+}
+
+type UpdatedDataSocialMedia struct {
+	ID             string     `json:"id" example:"here is the generated social media id"`
+	Name           string     `json:"name" example:"New Example"`
+	SocialMediaUrl string     `json:"social_media_url" example:"https://www.newexample.com/johndoe"`
+	UserID         string     `json:"user_id" example:"here is the generated user id"`
+	UpdatedAt      *time.Time `json:"updated_at" example:"the updated at generated here"`
+}
+
+type UpdatedSocialMedia struct {
+	Status  string                 `json:"status" example:"success"`
+	Message string                 `json:"message" example:"message you if the process has been successful"`
+	Data    UpdatedDataSocialMedia `json:"data"`
+}
+
+type DeletedSocialMedia struct {
+	Status  string `json:"status" example:"success"`
+	Message string `json:"message" example:"your social media has been successfully deleted"`
+}
+
+type SocialMedias struct {
+	SocialMedias []SocialMedia `json:"social_medias"`
+}
+
+type GetDataSocialMedia struct {
+	SocialMedias interface{} `json:"social_medias"`
+}
+
+type ResponseDataFetchedSocialMedia struct {
+	Status  string       `json:"status" example:"success"`
+	Message string       `json:"message" example:"message you if the process has been successful"`
+	Data    SocialMedias `json:"data"`
 }
