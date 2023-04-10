@@ -19,10 +19,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.19
-
-    - name: Tidying module dependencies
-      run: go mod tidy 
+        go-version: 1.20
 
     - name: Verifying module dependencies
       run: go mod verify
@@ -40,6 +37,6 @@ jobs:
       run: go test -v ./tests/...
 
     - name: Build
-      run: go build -v ./src/main.go
+      run: go build -v ./src/...
 
     
