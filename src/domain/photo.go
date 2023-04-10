@@ -44,8 +44,8 @@ type PhotoRepository interface {
 }
 
 type PhotoUseCase interface {
-	Save(context.Context, *Photo) error
-	Update(context.Context, Photo, string) (Photo, error)
+	Save(context.Context, *AddPhoto, string) (Photo, error)
+	Update(context.Context, *UpdatePhoto, string) (Photo, error)
 	DeleteById(context.Context, string) error
 	FindAll(context.Context, *[]Photo) error
 	FindById(context.Context, *Photo, string) error
@@ -59,19 +59,20 @@ type AddPhoto struct {
 }
 
 // Represents for added photo
-type AddedPhoto struct {
+type AddedDataPhoto struct {
 	ID        string     `json:"id"`
 	Title     string     `json:"title" form:"title" example:"A Photo Title"`
 	Caption   string     `json:"caption" form:"caption" example:"A caption"`
 	PhotoUrl  string     `json:"photo_url"  form:"photo_url" example:"https://www.example.com/image.jpg"`
-	UserID    string     `json:"user_id"`
+	User      *GetUser   `json:"user"`
 	CreatedAt *time.Time `json:"created_at" example:"create time should be here"`
 }
 
 // Represents for response added photo
-type ResponseAddedPhoto struct {
-	Status string     `json:"status" example:"success"`
-	Data   AddedPhoto `json:"data"`
+type AddedPhoto struct {
+	Status  string         `json:"status" example:"success"`
+	Message string         `json:"message" example:"message you if the process has been successful"`
+	Data    AddedDataPhoto `json:"data"`
 }
 
 // Represents for request update photo
@@ -82,24 +83,25 @@ type UpdatePhoto struct {
 	UserID   string
 }
 
-// Represents for updated photo
-type UpdatedPhoto struct {
+// Represents for updated data photo
+type UpdatedDataPhoto struct {
 	ID        string     `json:"id"`
 	Title     string     `json:"title"`
 	Caption   string     `json:"caption"`
 	PhotoUrl  string     `json:"photo_url"`
-	UserID    string     `json:"user_id"`
+	User      *GetUser   `json:"user"`
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
-// Represents response updated photo
-type ResponseUpdatedPhoto struct {
-	Status string       `json:"status" example:"success"`
-	Data   UpdatedPhoto `json:"data"`
+// Represents for updated photo
+type UpdatedPhoto struct {
+	Status  string           `json:"status" example:"success"`
+	Message string           `json:"message" example:"message you if the process has been successful"`
+	Data    UpdatedDataPhoto `json:"data"`
 }
 
 // Represents for response deleted user
-type ResponseDeletedPhoto struct {
+type DeletedPhoto struct {
 	Status  string `json:"status" example:"success"`
 	Message string `json:"message" example:"your account has been successfully deleted"`
 }
@@ -110,17 +112,17 @@ type GetPhoto struct {
 	Title     string     `json:"title,"`
 	Caption   string     `json:"caption"`
 	PhotoUrl  string     `json:"photo_url"`
-	UserID    string     `json:"user_id"`
+	User      *GetUser   `json:"user"`
 	CreatedAt *time.Time `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
-type ResponseGetAllPhotos struct {
+type GetAllPhotos struct {
 	Status string     `json:"status" example:"success"`
 	Data   []GetPhoto `json:"data"`
 }
 
-type ResponseGetByIdPhoto struct {
+type GetByIdPhoto struct {
 	Status string   `json:"status" example:"success"`
 	Data   GetPhoto `json:"data"`
 }

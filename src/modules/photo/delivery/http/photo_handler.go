@@ -19,28 +19,28 @@ func NewPhotoHandler(routers *gin.Engine, photoUseCase domain.PhotoUseCase) {
 
 	router := routers.Group("/api/v1/photo")
 	{
-		router.GET("", handler.GetAll)
 		router.Use(middleware.Authentication())
-		router.POST("", handler.Save)
+		router.GET("", handler.GetAll)
+		router.POST("", handler.Create)
 		router.PUT("/:photoId", middleware.AuthorizationPhoto(handler.photoUseCase), handler.Update)
 		router.DELETE("/:photoId", middleware.AuthorizationPhoto(handler.photoUseCase), handler.DeleteById)
 		router.GET("/:photoId", handler.GetById)
 	}
 }
 
-// Save godoc
+// CreatePhoto godoc
 // @Summary    	Store a photo
 // @Description	Create and store a photo with authentication user
 // @Tags        photo
 // @Accept      json
 // @Produce     json
 // @Param       json		body			domain.AddPhoto	true	"Add Photo"
-// @Success     201			{object}  		domain.ResponseAddedPhoto
+// @Success     201			{object}  		domain.AddedPhoto
 // @Failure     400			{object}		helpers.ResponseMessage
 // @Failure     401			{object}		helpers.ResponseMessage
 // @Security    Bearer
 // @Router      /photo	[post]
-func (handler *photoHandler) Save(ctx *gin.Context) {
+func (handler *photoHandler) Create(ctx *gin.Context) {
 	var (
 		input domain.AddPhoto
 		photo domain.Photo
@@ -58,12 +58,7 @@ func (handler *photoHandler) Save(ctx *gin.Context) {
 		return
 	}
 
-	photo.Title = input.Title
-	photo.Caption = input.Caption
-	photo.PhotoUrl = input.PhotoUrl
-	photo.UserID = userID
-
-	if err = handler.photoUseCase.Save(ctx.Request.Context(), &photo); err != nil {
+	if photo, err = handler.photoUseCase.Save(ctx.Request.Context(), &input, userID); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: err.Error(),
@@ -71,14 +66,19 @@ func (handler *photoHandler) Save(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, domain.ResponseAddedPhoto{
-		Status: "success",
-		Data: domain.AddedPhoto{
-			ID:        photo.ID,
-			Title:     photo.Title,
-			Caption:   photo.Caption,
-			PhotoUrl:  photo.PhotoUrl,
-			UserID:    photo.UserID,
+	ctx.JSON(http.StatusCreated, domain.AddedPhoto{
+		Status:  "success",
+		Message: "photo has been created",
+		Data: domain.AddedDataPhoto{
+			ID:       photo.ID,
+			Title:    photo.Title,
+			Caption:  photo.Caption,
+			PhotoUrl: photo.PhotoUrl,
+			User: &domain.GetUser{
+				ID:       photo.User.ID,
+				Email:    photo.User.Email,
+				Username: photo.User.Username,
+			},
 			CreatedAt: photo.CreatedAt,
 		},
 	})
@@ -92,7 +92,7 @@ func (handler *photoHandler) Save(ctx *gin.Context) {
 // @Produce     json
 // @Param       id		path      		string	true	"Photo ID"
 // @Param       json	body			domain.UpdatePhoto true  "Photo"
-// @Success     200		{object}  		domain.ResponseUpdatedPhoto
+// @Success     200		{object}  		domain.UpdatedPhoto
 // @Failure     400		{object}		helpers.ResponseMessage
 // @Failure     401		{object}		helpers.ResponseMessage
 // @Failure     404		{object}		helpers.ResponseMessage
@@ -113,12 +113,9 @@ func (handler *photoHandler) Update(ctx *gin.Context) {
 		return
 	}
 
-	photo.Title = input.Title
-	photo.Caption = input.Caption
-	photo.PhotoUrl = input.PhotoUrl
-
 	photoID := ctx.Param("photoId")
-	if photo, err = handler.photoUseCase.Update(ctx.Request.Context(), photo, photoID); err != nil {
+
+	if photo, err = handler.photoUseCase.Update(ctx.Request.Context(), &input, photoID); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: err.Error(),
@@ -126,14 +123,19 @@ func (handler *photoHandler) Update(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, domain.ResponseUpdatedPhoto{
-		Status: "success",
-		Data: domain.UpdatedPhoto{
-			ID:        photo.ID,
-			UserID:    photo.UserID,
-			Title:     photo.Title,
-			PhotoUrl:  photo.PhotoUrl,
-			Caption:   photo.Caption,
+	ctx.JSON(http.StatusOK, domain.UpdatedPhoto{
+		Status:  "success",
+		Message: "photo has been updated",
+		Data: domain.UpdatedDataPhoto{
+			ID:       photo.ID,
+			Title:    photo.Title,
+			Caption:  photo.Caption,
+			PhotoUrl: photo.PhotoUrl,
+			User: &domain.GetUser{
+				ID:       photo.User.ID,
+				Email:    photo.User.Email,
+				Username: photo.User.Username,
+			},
 			UpdatedAt: photo.UpdatedAt,
 		},
 	})
@@ -146,7 +148,7 @@ func (handler *photoHandler) Update(ctx *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Param       id	path			string	true	"Photo ID"
-// @Success     200	{object}		domain.ResponseDeletedPhoto
+// @Success     200	{object}		domain.DeletedPhoto
 // @Failure     400	{object}		helpers.ResponseMessage
 // @Failure     401	{object}		helpers.ResponseMessage
 // @Failure     404	{object}		helpers.ResponseMessage
@@ -163,7 +165,7 @@ func (handler *photoHandler) DeleteById(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, domain.ResponseDeletedPhoto{
+	ctx.JSON(http.StatusOK, domain.DeletedPhoto{
 		Status:  "success",
 		Message: "your photo has been successfully deleted",
 	})
@@ -175,9 +177,10 @@ func (handler *photoHandler) DeleteById(ctx *gin.Context) {
 // @Tags        photo
 // @Accept      json
 // @Produce     json
-// @Success     200			{object}	domain.ResponseGetAllPhotos
+// @Success     200			{object}	domain.GetAllPhotos
 // @Failure     400			{object}	helpers.ResponseMessage
 // @Failure     401			{object}	helpers.ResponseMessage
+// @Security    Bearer
 // @Router      /photo	[get]
 func (handler *photoHandler) GetAll(ctx *gin.Context) {
 	var (
@@ -198,11 +201,15 @@ func (handler *photoHandler) GetAll(ctx *gin.Context) {
 
 	for _, photo := range photos {
 		fetchedPhotos = append(fetchedPhotos, &domain.GetPhoto{
-			ID:        photo.ID,
-			Title:     photo.Title,
-			Caption:   photo.Caption,
-			PhotoUrl:  photo.PhotoUrl,
-			UserID:    photo.UserID,
+			ID:       photo.ID,
+			Title:    photo.Title,
+			Caption:  photo.Caption,
+			PhotoUrl: photo.PhotoUrl,
+			User: &domain.GetUser{
+				ID:       photo.User.ID,
+				Email:    photo.User.Email,
+				Username: photo.User.Username,
+			},
 			CreatedAt: photo.CreatedAt,
 			UpdatedAt: photo.UpdatedAt,
 		})
@@ -241,14 +248,18 @@ func (handler *photoHandler) GetById(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, domain.ResponseGetByIdPhoto{
+	ctx.JSON(http.StatusOK, domain.GetByIdPhoto{
 		Status: "success",
 		Data: domain.GetPhoto{
-			ID:        photo.ID,
-			Title:     photo.Title,
-			Caption:   photo.Caption,
-			PhotoUrl:  photo.PhotoUrl,
-			UserID:    photo.UserID,
+			ID:       photo.ID,
+			Title:    photo.Title,
+			Caption:  photo.Caption,
+			PhotoUrl: photo.PhotoUrl,
+			User: &domain.GetUser{
+				ID:       photo.User.ID,
+				Email:    photo.User.Email,
+				Username: photo.User.Username,
+			},
 			CreatedAt: photo.CreatedAt,
 			UpdatedAt: photo.UpdatedAt,
 		},

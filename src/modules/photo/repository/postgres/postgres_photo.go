@@ -85,11 +85,11 @@ func (photoRepository *photoRepository) FindById(ctx context.Context, photo *dom
 
 	defer cancel()
 
-	if err = photoRepository.db.WithContext(ctx).First(&photo, &id).Error; err != nil {
+	if err = photoRepository.db.WithContext(ctx).Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "username", "email")
+	}).First(&photo, &id).Error; err != nil {
 		return err
 	}
 
 	return
 }
-
-
