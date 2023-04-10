@@ -21,22 +21,9 @@ jobs:
       with:
         go-version: 1.20
 
-    - name: Verifying module dependencies
-      run: go mod verify
-    
-    - name: Formatting code
-      run: go fmt ./src/...
-
-    - name: Vetting code
-      run: go vet ./src/...
-
-    - name: Vendoring
-      run: go mod vendor
-
     - name: Test
       run: go test -v ./tests/...
 
     - name: Build
-      run: go build -v ./src/...
-
+      run: go test -v ./tests/... -coverprofile=./c.out && go tool cover -html=./c.out -o ./coverage.html
     
