@@ -15,8 +15,8 @@ type Comment struct {
 	Message   string     `gorm:"not null" valid:"required" form:"message" json:"message" example:"A comment"`
 	CreatedAt *time.Time `gorm:"not null;autoCreateTime" json:"created_at,omitempty"`
 	UpdatedAt *time.Time `gorm:"not null;autoCreateTime" json:"updated_at,omitempty"`
-	User      *User      `gorm:"foreignKey:UserID;constraint:opUpdate:CASCADE,onDelete:CASCADE" json:"user"`
-	Photo     *Photo     `gorm:"foreignKey:PhotoID;constraint:opUpdate:CASCADE,onDelete:CASCADE" json:"photo"`
+	User      *User      `gorm:"foreignKey:UserID;constraint:opUpdate:CASCADE,onDelete:CASCADE" json:"user,omitempty"`
+	Photo     *Photo     `gorm:"foreignKey:PhotoID;constraint:opUpdate:CASCADE,onDelete:CASCADE" json:"photo,omitempty"`
 }
 
 func (c *Comment) BeforeCreate(db *gorm.DB) (err error) {

@@ -224,6 +224,14 @@ func (handler *photoHandler) GetAll(ctx *gin.Context) {
 		})
 	}
 
+	if len(fetchedPhotos) < 1 {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
+			Status:  "fail",
+			Message: "photos is empty",
+		})
+		return
+	}
+
 	ctx.JSON(http.StatusOK, domain.GetAllPhotos{
 		Status:  "success",
 		Message: "get all photos",

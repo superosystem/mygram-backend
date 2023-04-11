@@ -331,7 +331,7 @@ func TestFindAllPhoto(t *testing.T) {
 	})
 }
 
-func TestFindByIdPhoto(t *testing.T) {
+func TestFindPhotoById(t *testing.T) {
 	mockPhotoId := "photo-123"
 	mockPhoto := domain.Photo{
 		ID:       "photo-123",

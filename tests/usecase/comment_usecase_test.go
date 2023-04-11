@@ -333,7 +333,7 @@ func TestFindAllByPhoto(t *testing.T) {
 	})
 }
 
-func TestFindById(t *testing.T) {
+func TestFindCommentById(t *testing.T) {
 	now := time.Now()
 	mockComment := domain.Comment{
 		ID:        "comment-123",

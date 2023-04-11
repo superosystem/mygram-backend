@@ -200,6 +200,14 @@ func (handler *socialMediaHandler) GetAllByUser(ctx *gin.Context) {
 		return
 	}
 
+	if len(socialMedias) < 1 {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
+			Status:  "fail",
+			Message: "social media is empty",
+		})
+		return
+	}
+
 	ctx.JSON(http.StatusOK, helpers.ResponseData{
 		Status: "success",
 		Data: domain.GetDataSocialMedia{
