@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestRegister(t *testing.T) {
+func TestRegisterUser(t *testing.T) {
 	mockRegisteredUser := domain.User{
 		ID:       "user-123",
 		Email:    "johndoe@example.com",
@@ -54,7 +54,7 @@ func TestRegister(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("should fail with empty email", func(t *testing.T) {
+	t.Run("should fail register user with empty email", func(t *testing.T) {
 		tempMockRegisterUser := domain.User{
 			Email:    "",
 			Username: "johndoe",
@@ -81,7 +81,7 @@ func TestRegister(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("should fail with empty username", func(t *testing.T) {
+	t.Run("should fail register user with empty username", func(t *testing.T) {
 		tempMockRegisterUser := domain.User{
 			Email:    "johndoe@example.com",
 			Username: "",
@@ -108,7 +108,7 @@ func TestRegister(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("should fail with invalid email format", func(t *testing.T) {
+	t.Run("should fail register with invalid email format", func(t *testing.T) {
 		tempMockRegisterUser := domain.User{
 			Email:    "johndoe",
 			Username: "johndoe",
@@ -135,7 +135,7 @@ func TestRegister(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("should faile with password under limit character", func(t *testing.T) {
+	t.Run("should fail register user with password under limit character", func(t *testing.T) {
 		tempMockRegisterUser := domain.User{
 			Email:    "johndoe@example.com",
 			Username: "johndoe",
@@ -162,7 +162,7 @@ func TestRegister(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("should fail with age under limit number", func(t *testing.T) {
+	t.Run("should fail register with age under limit number", func(t *testing.T) {
 		tempMockRegisterUser := domain.User{
 			Email:    "johndoe@example.com",
 			Username: "johndoe",
@@ -189,7 +189,7 @@ func TestRegister(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("register user with not contain needed property", func(t *testing.T) {
+	t.Run("should fail register user with not contain needed property", func(t *testing.T) {
 		tempMockRegisterUser := domain.User{
 			Email: "johndoe@example.com",
 			Age:   8,
@@ -216,7 +216,7 @@ func TestRegister(t *testing.T) {
 	})
 }
 
-func TestLogin(t *testing.T) {
+func TestLoginUser(t *testing.T) {
 	mockRegisteredUser := domain.User{
 		ID:       "user-123",
 		Username: "johndoe",
@@ -248,7 +248,7 @@ func TestLogin(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("should fail with not registered email", func(t *testing.T) {
+	t.Run("should fail login user with not registered email", func(t *testing.T) {
 		tempMockLoginUser := domain.User{
 			Email:    "lorem@example.com",
 			Password: "secret",
@@ -268,7 +268,7 @@ func TestLogin(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("should fail with invalid password", func(t *testing.T) {
+	t.Run("should fail login user with invalid password", func(t *testing.T) {
 		tempMockLoginUser := domain.User{
 			Email:    "johndoe@example.com",
 			Password: "scrt",
@@ -288,7 +288,7 @@ func TestLogin(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("should fail with empty email", func(t *testing.T) {
+	t.Run("should fail login user with empty email", func(t *testing.T) {
 		tempMockLoginUser := domain.User{
 			Email:    "",
 			Password: "secret",
@@ -308,7 +308,7 @@ func TestLogin(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("should fail with empty password", func(t *testing.T) {
+	t.Run("should fail login user with empty password", func(t *testing.T) {
 		tempMockLoginUser := domain.User{
 			Email:    "johndoe@example.com",
 			Password: "",
@@ -329,7 +329,7 @@ func TestLogin(t *testing.T) {
 	})
 }
 
-func TestUpdate(t *testing.T) {
+func TestUpdateUser(t *testing.T) {
 	now := time.Now()
 	mockUpdatedUser := domain.User{
 		ID:        "user-123",
@@ -373,7 +373,7 @@ func TestUpdate(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("shoudl success with empty email", func(t *testing.T) {
+	t.Run("should success update user with empty email", func(t *testing.T) {
 		tempMockUpdateUser := domain.User{
 			Email:    "",
 			Username: "newjohndoe",
@@ -403,7 +403,7 @@ func TestUpdate(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("should success with empty username", func(t *testing.T) {
+	t.Run("should success update user with empty username", func(t *testing.T) {
 		tempMockUpdateUser := domain.User{
 			Email:    "newjohndoe@example.com",
 			Username: "",
@@ -433,7 +433,7 @@ func TestUpdate(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("should success with empty username and email", func(t *testing.T) {
+	t.Run("should success update user with empty username and email", func(t *testing.T) {
 		tempMockUpdateUser := domain.User{
 			Email:    "",
 			Username: "",
@@ -465,7 +465,7 @@ func TestUpdate(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("should fail with invalid email format", func(t *testing.T) {
+	t.Run("should fail update user with invalid email format", func(t *testing.T) {
 		tempMockUpdateUser := domain.User{
 			Email:    "newjohndoe",
 			Username: "newjohndoe",
@@ -498,7 +498,7 @@ func TestUpdate(t *testing.T) {
 	})
 }
 
-func TestDelete(t *testing.T) {
+func TestDeleteUser(t *testing.T) {
 	mockUser := domain.User{
 		ID:       "user-123",
 		Email:    "johndoe@example.com",
@@ -519,7 +519,7 @@ func TestDelete(t *testing.T) {
 		mockUserRepository.AssertExpectations(t)
 	})
 
-	t.Run("should faile with not found user", func(t *testing.T) {
+	t.Run("should fail delete user with not found user", func(t *testing.T) {
 		mockUserRepository.On("DeleteById", mock.Anything, mock.AnythingOfType("string")).Return(errors.New("fail")).Once()
 
 		err := userUseCase.Delete(context.Background(), "user-234")

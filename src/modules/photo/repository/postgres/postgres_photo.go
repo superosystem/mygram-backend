@@ -31,6 +31,12 @@ func (photoRepository *photoRepository) Save(ctx context.Context, photo *domain.
 		return err
 	}
 
+	if err = photoRepository.db.WithContext(ctx).Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "username", "email")
+	}).First(&photo).Error; err != nil {
+		return err
+	}
+
 	return
 }
 
@@ -45,6 +51,12 @@ func (photoRepository *photoRepository) Update(ctx context.Context, photo domain
 	}
 
 	if err = photoRepository.db.WithContext(ctx).Model(&p).Updates(photo).Error; err != nil {
+		return p, err
+	}
+
+	if err = photoRepository.db.WithContext(ctx).Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "username", "email")
+	}).First(&p).Error; err != nil {
 		return p, err
 	}
 

@@ -20,8 +20,8 @@ func NewPhotoHandler(routers *gin.Engine, photoUseCase domain.PhotoUseCase) {
 	router := routers.Group("/api/v1/photo")
 	{
 		router.Use(middleware.Authentication())
-		router.POST("", handler.Create)
-		router.PUT("/:photoId", middleware.AuthorizationPhoto(handler.photoUseCase), handler.Update)
+		router.POST("", handler.CreatePhoto)
+		router.PUT("/:photoId", middleware.AuthorizationPhoto(handler.photoUseCase), handler.UpdatePhoto)
 		router.DELETE("/:photoId", middleware.AuthorizationPhoto(handler.photoUseCase), handler.DeleteById)
 		router.GET("", handler.GetAll)
 		router.GET("/:photoId", handler.GetById)
@@ -40,7 +40,7 @@ func NewPhotoHandler(routers *gin.Engine, photoUseCase domain.PhotoUseCase) {
 // @Failure     401			{object}		helpers.ResponseMessage
 // @Security    Bearer
 // @Router      /photo	[post]
-func (handler *photoHandler) Create(ctx *gin.Context) {
+func (handler *photoHandler) CreatePhoto(ctx *gin.Context) {
 	var (
 		input domain.AddPhoto
 		photo domain.Photo
@@ -58,7 +58,12 @@ func (handler *photoHandler) Create(ctx *gin.Context) {
 		return
 	}
 
-	if photo, err = handler.photoUseCase.Save(ctx.Request.Context(), &input, userID); err != nil {
+	photo.Title = input.Title
+	photo.Caption = input.Caption
+	photo.PhotoUrl = input.PhotoUrl
+	photo.UserID = userID
+
+	if err = handler.photoUseCase.Save(ctx.Request.Context(), &photo); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: err.Error(),
@@ -98,7 +103,7 @@ func (handler *photoHandler) Create(ctx *gin.Context) {
 // @Failure     404		{object}		helpers.ResponseMessage
 // @Security    Bearer
 // @Router      /photo/{id}		[put]
-func (handler *photoHandler) Update(ctx *gin.Context) {
+func (handler *photoHandler) UpdatePhoto(ctx *gin.Context) {
 	var (
 		input domain.UpdatePhoto
 		photo domain.Photo
@@ -113,9 +118,13 @@ func (handler *photoHandler) Update(ctx *gin.Context) {
 		return
 	}
 
+	photo.Title = input.Title
+	photo.Caption = input.Caption
+	photo.PhotoUrl = input.PhotoUrl
+
 	photoID := ctx.Param("photoId")
 
-	if photo, err = handler.photoUseCase.Update(ctx.Request.Context(), &input, photoID); err != nil {
+	if photo, err = handler.photoUseCase.Update(ctx.Request.Context(), photo, photoID); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: err.Error(),
@@ -167,7 +176,7 @@ func (handler *photoHandler) DeleteById(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, domain.DeletedPhoto{
 		Status:  "success",
-		Message: "your photo has been successfully deleted",
+		Message: "photo has been deleted",
 	})
 }
 

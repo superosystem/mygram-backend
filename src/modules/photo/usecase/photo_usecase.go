@@ -14,34 +14,16 @@ func NewPhotoUseCase(photoRepository domain.PhotoRepository) *photoUseCase {
 	return &photoUseCase{photoRepository}
 }
 
-func (photoUseCase *photoUseCase) Save(ctx context.Context, input *domain.AddPhoto, userID string) (photo domain.Photo, err error) {
-	photo.Title = input.Title
-	photo.Caption = input.Caption
-	photo.PhotoUrl = input.PhotoUrl
-	photo.UserID = userID
-
-	if err = photoUseCase.photoRepository.Save(ctx, &photo); err != nil {
-		return photo, err
-	}
-
-	if err = photoUseCase.photoRepository.FindById(ctx, &photo, photo.ID); err != nil {
-		return photo, err
+func (photoUseCase *photoUseCase) Save(ctx context.Context, photo *domain.Photo) (err error) {
+	if err = photoUseCase.photoRepository.Save(ctx, photo); err != nil {
+		return err
 	}
 
 	return
 }
 
-func (photoUseCase *photoUseCase) Update(ctx context.Context, input *domain.UpdatePhoto, id string) (photo domain.Photo, err error) {
-
-	photo.Title = input.Title
-	photo.Caption = input.Caption
-	photo.PhotoUrl = input.PhotoUrl
-
-	if photo, err = photoUseCase.photoRepository.Update(ctx, photo, id); err != nil {
-		return photo, err
-	}
-
-	if err = photoUseCase.photoRepository.FindById(ctx, &photo, photo.ID); err != nil {
+func (photoUseCase *photoUseCase) Update(ctx context.Context, p domain.Photo, id string) (photo domain.Photo, err error) {
+	if photo, err = photoUseCase.photoRepository.Update(ctx, p, id); err != nil {
 		return photo, err
 	}
 

@@ -1,10 +1,11 @@
 #################### DEVELOPMENT ####################
+## run: Running on Development
+.PHONY: run
 run:
 	go run src/main.go
 
-test:
-	go test -v ./tests/...
-
+## swagger: Generate Swagger Docs
+.PHONY: run
 swagger:
 	swag init -g src/main.go
 
@@ -19,3 +20,34 @@ mockery-repository:
 
 mockery-usecase:
 	mockery --dir=src/domain --name=$(name) --filename=$(filename).go --output=src/domain/mocks/usecase --outpkg=mocks
+
+
+# ==================================================================================== #
+# QUALITY CONTROL
+# ==================================================================================== #
+## test: Testing project 
+.PHONY: test
+test:
+	@echo 'MyGramm on Test...'
+	go test ./tests/...
+
+## audit: Tidy dependencies and format, vet and test all code
+.PHONY: audit
+audit:
+	@echo 'Tidying and verifying module dependencies...'
+	go mod tidy
+	go mod verify
+	@echo 'Formatting code...'
+	go fmt ./...
+	@echo 'Vetting code...'
+	go vet ./...
+	staticcheck ./...
+
+## vendor: Tidy and vendor dependencies
+.PHONY: vendor
+vendor:
+	@echo 'Tidying and verifying module dependencies...'
+	go mod tidy
+	go mod verify
+	@echo 'Vendoring dependencies...'
+	go mod vendor
