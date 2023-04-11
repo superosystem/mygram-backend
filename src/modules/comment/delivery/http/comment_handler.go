@@ -231,7 +231,7 @@ func (handler *commentHandler) GetAllByUser(ctx *gin.Context) {
 	}
 
 	if len(comments) < 1 {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
+		ctx.AbortWithStatusJSON(http.StatusNotFound, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: "comments is empty",
 		})
@@ -273,7 +273,7 @@ func (handler *commentHandler) GetAllByPhoto(ctx *gin.Context) {
 	}
 
 	if len(comments) < 1 {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
+		ctx.AbortWithStatusJSON(http.StatusNotFound, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: "comments is empty",
 		})

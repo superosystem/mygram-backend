@@ -2,6 +2,7 @@ package delivery
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
@@ -259,6 +260,14 @@ func (handler *photoHandler) GetById(ctx *gin.Context) {
 	photoID := ctx.Param("photoId")
 
 	if err = handler.photoUseCase.FindById(ctx.Request.Context(), &photo, photoID); err != nil {
+		if strings.Contains(err.Error(), "record not found") {
+			ctx.AbortWithStatusJSON(http.StatusNotFound, helpers.ResponseMessage{
+				Status:  "fail",
+				Message: "photo is not found",
+			})
+			return
+		}
+
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: err.Error(),
