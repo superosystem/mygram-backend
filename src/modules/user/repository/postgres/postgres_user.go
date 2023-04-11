@@ -23,7 +23,6 @@ func NewUserRepository(db *gorm.DB) *userRepository {
 
 func (userRepository *userRepository) Register(ctx context.Context, user *domain.User) (err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-
 	defer cancel()
 
 	ID, _ := gonanoid.New(16)
@@ -31,6 +30,17 @@ func (userRepository *userRepository) Register(ctx context.Context, user *domain
 	user.ID = fmt.Sprintf("user-%s", ID)
 
 	if err = userRepository.db.WithContext(ctx).Create(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			var count int64
+			userRepository.db.WithContext(ctx).Model(&user).Where("email = ?", user.Email).Count(&count)
+			if count != 0 {
+				err = errors.New("duplicate key on idx_users_email")
+				return err
+			} else {
+				err = errors.New("duplicate key on idx_users_username")
+				return err 
+			}
+		}
 		return err
 	}
 
@@ -73,6 +83,15 @@ func (userRepository *userRepository) Update(ctx context.Context, u domain.User)
 	}
 
 	if err = userRepository.db.WithContext(ctx).Model(&user).Updates(&u).Error; err != nil {
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			var count int64
+			userRepository.db.WithContext(ctx).Model(&user).Where("email = ?", user.Email).Count(&count)
+			if count != 0 {
+				return user, errors.New("duplicate key on idx_users_email")
+			} else {
+				return user, errors.New("duplicate key on idx_users_username")
+			}
+		}
 		return user, err
 	}
 

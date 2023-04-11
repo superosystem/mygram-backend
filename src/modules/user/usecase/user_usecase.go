@@ -2,10 +2,8 @@ package usecase
 
 import (
 	"context"
-	"errors"
 
 	"github.com/gusrylmubarok/mygram-backend/src/domain"
-	"gorm.io/gorm"
 )
 
 type userUseCase struct {
@@ -18,15 +16,6 @@ func NewUserUseCase(userRepository domain.UserRepository) *userUseCase {
 
 func (userUseCase *userUseCase) Register(ctx context.Context, user *domain.User) (err error) {
 	if err = userUseCase.userRepository.Register(ctx, user); err != nil {
-		if errors.Is(err, gorm.ErrDuplicatedKey) {
-			if _, err = userUseCase.userRepository.FindByEmail(ctx, user); err == nil {
-				return errors.New("duplicate key on idx_user_email")
-			}
-
-			if _, err = userUseCase.userRepository.FindByUsername(ctx, user); err == nil {
-				return errors.New("duplicate key on idx_user_username")
-			}
-		}
 		return err
 	}
 
@@ -43,25 +32,32 @@ func (userUseCase *userUseCase) Login(ctx context.Context, user *domain.User) (e
 
 func (userUseCase *userUseCase) Update(ctx context.Context, u domain.User) (user domain.User, err error) {
 	if user, err = userUseCase.userRepository.Update(ctx, u); err != nil {
-		if errors.Is(err, gorm.ErrDuplicatedKey) {
-			if _, err = userUseCase.userRepository.FindByEmail(ctx, &user); err == nil {
-				return user, errors.New("duplicate key on idx_user_email")
-			}
-
-			if _, err = userUseCase.userRepository.FindByUsername(ctx, &user); err == nil {
-				return user, errors.New("duplicate key on idx_user_username")
-			}
-		}
 		return user, err
 	}
 
 	return user, nil
 }
 
-func (userUseCase *userUseCase) Delete(ctx context.Context, id string) (err error) {
+func (userUseCase *userUseCase) DeleteById(ctx context.Context, id string) (err error) {
 	if err = userUseCase.userRepository.DeleteById(ctx, id); err != nil {
 		return err
 	}
 
 	return
+}
+
+func (userUseCase *userUseCase) FindByEmail(ctx context.Context, u *domain.User) (user domain.User, err error) {
+	if user, err = userUseCase.userRepository.FindByEmail(ctx, u); err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
+func (userUseCase *userUseCase) FindByUsername(ctx context.Context, u *domain.User) (user domain.User, err error) {
+	if user, err = userUseCase.userRepository.FindByUsername(ctx, u); err != nil {
+		return user, err
+	}
+
+	return user, nil
 }

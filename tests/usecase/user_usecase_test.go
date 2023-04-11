@@ -513,7 +513,7 @@ func TestDeleteUser(t *testing.T) {
 	t.Run("should success delete user", func(t *testing.T) {
 		mockUserRepository.On("DeleteById", mock.Anything, mock.AnythingOfType("string")).Return(nil).Once()
 
-		err := userUseCase.Delete(context.Background(), mockUser.ID)
+		err := userUseCase.DeleteById(context.Background(), mockUser.ID)
 
 		assert.NoError(t, err)
 		mockUserRepository.AssertExpectations(t)
@@ -522,7 +522,7 @@ func TestDeleteUser(t *testing.T) {
 	t.Run("should fail delete user with not found user", func(t *testing.T) {
 		mockUserRepository.On("DeleteById", mock.Anything, mock.AnythingOfType("string")).Return(errors.New("fail")).Once()
 
-		err := userUseCase.Delete(context.Background(), "user-234")
+		err := userUseCase.DeleteById(context.Background(), "user-234")
 
 		assert.Error(t, err)
 		mockUserRepository.AssertExpectations(t)

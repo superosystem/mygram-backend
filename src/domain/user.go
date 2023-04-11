@@ -12,8 +12,8 @@ import (
 // User represents entity for a user
 type User struct {
 	ID           string         `gorm:"primaryKey;type:VARCHAR(50)" json:"id"`
-	Username     string         `gorm:"type:VARCHAR(50);uniqueIndex;not null" valid:"required" form:"username" json:"username" example:"johndoe"`
-	Email        string         `gorm:"type:VARCHAR(50);uniqueIndex;not null" valid:"email,required" form:"email" json:"email" example:"johndoe@example.com"`
+	Username     string         `gorm:"type:VARCHAR(50);index:idx_username;unique;not null" valid:"required" form:"username" json:"username" example:"johndoe"`
+	Email        string         `gorm:"type:VARCHAR(50);index:idx_email;unique;not null" valid:"email,required" form:"email" json:"email" example:"johndoe@example.com"`
 	Password     string         `gorm:"not null" valid:"required,minstringlength(6)" form:"password" json:"password,omitempty" example:"secret"`
 	Age          uint           `gorm:"not null" valid:"required,range(8|63)" form:"age" json:"age,omitempty" example:"8"`
 	CreatedAt    *time.Time     `gorm:"not null;autoCreateTime" json:"created_at,omitempty"`
@@ -44,7 +44,9 @@ type UserUseCase interface {
 	Register(context.Context, *User) error
 	Login(context.Context, *User) error
 	Update(context.Context, User) (User, error)
-	Delete(context.Context, string) error
+	DeleteById(context.Context, string) error
+	FindByEmail(context.Context, *User) (User, error)
+	FindByUsername(context.Context, *User) (User, error)
 }
 
 type UserRepository interface {

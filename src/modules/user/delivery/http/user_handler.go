@@ -1,6 +1,7 @@
 package delivery
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -15,7 +16,7 @@ type userHandler struct {
 	userUseCase domain.UserUseCase
 }
 
-func NewUserHandler(routers *gin.Engine, userUseCase domain.UserUseCase) {
+func NewUserHandler(routers *gin.Engine, userUseCase domain.UserUseCase) *userHandler {
 	handler := &userHandler{userUseCase}
 
 	router := routers.Group("/api/v1/user")
@@ -25,6 +26,8 @@ func NewUserHandler(routers *gin.Engine, userUseCase domain.UserUseCase) {
 		router.PUT("", middleware.Authentication(), handler.Update)
 		router.DELETE("", middleware.Authentication(), handler.Delete)
 	}
+
+	return handler
 }
 
 // Register godoc
@@ -59,7 +62,8 @@ func (handler *userHandler) Register(ctx *gin.Context) {
 	user.Age = input.Age
 
 	if err = handler.userUseCase.Register(ctx.Request.Context(), &user); err != nil {
-		if strings.Contains(err.Error(), "idx_user_username") {
+		fmt.Println(err.Error())
+		if strings.Contains(err.Error(), "idx_users_username") {
 			ctx.AbortWithStatusJSON(http.StatusConflict, helpers.ResponseMessage{
 				Status:  "fail",
 				Message: "the username you entered has been used",
@@ -67,7 +71,7 @@ func (handler *userHandler) Register(ctx *gin.Context) {
 			return
 		}
 
-		if strings.Contains(err.Error(), "idx_user_email") {
+		if strings.Contains(err.Error(), "idx_users_email") {
 			ctx.AbortWithStatusJSON(http.StatusConflict, helpers.ResponseMessage{
 				Status:  "fail",
 				Message: "the email you entered has been used",
@@ -79,12 +83,13 @@ func (handler *userHandler) Register(ctx *gin.Context) {
 			Status:  "fail",
 			Message: err.Error(),
 		})
+
 		return
 	}
 
 	ctx.JSON(http.StatusCreated, domain.RegisteredUser{
 		Status:  "success",
-		Message: "account registration has been successful",
+		Message: "user registration has been successful",
 		Data: domain.GetUser{
 			ID:       user.ID,
 			Username: user.Username,
@@ -193,7 +198,7 @@ func (handler *userHandler) Update(ctx *gin.Context) {
 	user.ID = userID
 
 	if user, err = handler.userUseCase.Update(ctx.Request.Context(), user); err != nil {
-		if strings.Contains(err.Error(), "idx_user_username") {
+		if strings.Contains(err.Error(), "idx_users_username") {
 			ctx.AbortWithStatusJSON(http.StatusConflict, helpers.ResponseMessage{
 				Status:  "fail",
 				Message: "the username you entered has been used",
@@ -201,7 +206,7 @@ func (handler *userHandler) Update(ctx *gin.Context) {
 			return
 		}
 
-		if strings.Contains(err.Error(), "idx_user_email") {
+		if strings.Contains(err.Error(), "idx_users_email") {
 			ctx.AbortWithStatusJSON(http.StatusConflict, helpers.ResponseMessage{
 				Status:  "fail",
 				Message: "the email you entered has been used",
@@ -245,7 +250,7 @@ func (handler *userHandler) Delete(ctx *gin.Context) {
 	userData := ctx.MustGet("userData").(jwt.MapClaims)
 	userID := string(userData["id"].(string))
 
-	if err := handler.userUseCase.Delete(ctx, userID); err != nil {
+	if err := handler.userUseCase.DeleteById(ctx, userID); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: "account not found",
