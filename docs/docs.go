@@ -1434,6 +1434,9 @@ const docTemplate = `{
                 "updated_at": {
                     "type": "string"
                 },
+                "user": {
+                    "$ref": "#/definitions/domain.User"
+                },
                 "user_id": {
                     "type": "string"
                 }

@@ -29,7 +29,7 @@ mockery-usecase:
 .PHONY: test
 test:
 	@echo 'MyGramm on Test...'
-	go test ./tests/...
+	go test -v ./tests/...
 
 ## audit: Tidy dependencies and format, vet and test all code
 .PHONY: audit

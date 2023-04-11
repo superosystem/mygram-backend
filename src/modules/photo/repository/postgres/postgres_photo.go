@@ -40,27 +40,27 @@ func (photoRepository *photoRepository) Save(ctx context.Context, photo *domain.
 	return
 }
 
-func (photoRepository *photoRepository) Update(ctx context.Context, photo domain.Photo, id string) (p domain.Photo, err error) {
+func (photoRepository *photoRepository) Update(ctx context.Context, p domain.Photo, id string) (photo domain.Photo, err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	p = domain.Photo{}
+	photo = domain.Photo{}
 
-	if err = photoRepository.db.WithContext(ctx).First(&p, &id).Error; err != nil {
-		return p, err
+	if err = photoRepository.db.WithContext(ctx).First(&photo, &id).Error; err != nil {
+		return photo, err
 	}
 
-	if err = photoRepository.db.WithContext(ctx).Model(&p).Updates(photo).Error; err != nil {
-		return p, err
+	if err = photoRepository.db.WithContext(ctx).Model(&photo).Updates(p).Error; err != nil {
+		return photo, err
 	}
 
 	if err = photoRepository.db.WithContext(ctx).Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Select("id", "username", "email")
-	}).First(&p).Error; err != nil {
-		return p, err
+	}).First(&photo).Error; err != nil {
+		return photo, err
 	}
 
-	return p, nil
+	return photo, nil
 }
 
 func (photoRepository *photoRepository) DeleteById(ctx context.Context, id string) (err error) {

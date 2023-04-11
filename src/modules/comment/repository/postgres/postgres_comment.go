@@ -30,6 +30,14 @@ func (commentRepository *commentRepository) Save(ctx context.Context, comment *d
 		return err
 	}
 
+	if err = commentRepository.db.WithContext(ctx).Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "username", "email")
+	}).Preload("Photo", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "title", "caption", "photo_url", "user_id")
+	}).First(&comment).Error; err != nil {
+		return err
+	}
+
 	return
 }
 
@@ -41,18 +49,23 @@ func (commentRepository *commentRepository) Update(ctx context.Context, c domain
 		return comment, err
 	}
 
-	if err = commentRepository.db.WithContext(ctx).Model(&comment).Updates(comment).Error; err != nil {
+	if err = commentRepository.db.WithContext(ctx).Model(&comment).Updates(c).Error; err != nil {
 		return comment, err
 	}
 
-	fmt.Println(comment)
+	if err = commentRepository.db.WithContext(ctx).Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "username", "email")
+	}).Preload("Photo", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id", "title", "caption", "photo_url", "user_id")
+	}).First(&comment).Error; err != nil {
+		return comment, err
+	}
 
 	return comment, nil
 }
 
 func (commentRepository *commentRepository) DeleteById(ctx context.Context, id string) (err error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-
 	defer cancel()
 
 	if err = commentRepository.db.WithContext(ctx).First(&domain.Comment{}, &id).Error; err != nil {

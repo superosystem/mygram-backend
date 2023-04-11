@@ -354,7 +354,7 @@ func TestFindByIdPhoto(t *testing.T) {
 	})
 
 	t.Run("should fail find a photo with id not found", func(t *testing.T) {
-		mockPhotoRepository.On("FindById", mock.Anything, mock.AnythingOfType("*domain.Photo"), mock.AnythingOfType("string")).Return(nil).Once()
+		mockPhotoRepository.On("FindById", mock.Anything, mock.AnythingOfType("*domain.Photo"), mock.AnythingOfType("string")).Return(errors.New("fail")).Once()
 
 		err := photoUseCase.FindById(context.Background(), &mockPhoto, "photo-345")
 

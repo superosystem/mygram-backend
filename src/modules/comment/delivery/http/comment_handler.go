@@ -73,10 +73,11 @@ func (handler *commentHandler) CreateComment(ctx *gin.Context) {
 		return
 	}
 
-	input.PhotoID = photo.ID
-	input.UserID = userID
+	comment.Message = input.Message
+	comment.PhotoID = input.PhotoID
+	comment.UserID = userID
 
-	if comment, err = handler.commentUseCase.Save(ctx.Request.Context(), &input); err != nil {
+	if err = handler.commentUseCase.Save(ctx.Request.Context(), &comment); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: err.Error(),
@@ -127,7 +128,8 @@ func (handler *commentHandler) UpdateComment(ctx *gin.Context) {
 		err     error
 	)
 
-	commentID := ctx.Param("commentId")
+	userData := ctx.MustGet("userData").(jwt.MapClaims)
+	userID := string(userData["id"].(string))
 
 	if err = ctx.ShouldBindJSON(&input); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
@@ -137,12 +139,12 @@ func (handler *commentHandler) UpdateComment(ctx *gin.Context) {
 		return
 	}
 
-	userData := ctx.MustGet("userData").(jwt.MapClaims)
-	userID := string(userData["id"].(string))
+	comment.Message = input.Message
+	comment.UserID = userID
 
-	input.UserID = userID
+	commentID := ctx.Param("commentId")
 
-	if comment, err = handler.commentUseCase.Update(ctx.Request.Context(), input, commentID); err != nil {
+	if comment, err = handler.commentUseCase.Update(ctx.Request.Context(), comment, commentID); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, helpers.ResponseMessage{
 			Status:  "fail",
 			Message: err.Error(),

@@ -44,8 +44,8 @@ type CommentRepository interface {
 }
 
 type CommentUseCase interface {
-	Save(context.Context, *AddComment) (Comment, error)
-	Update(context.Context, UpdateComment, string) (Comment, error)
+	Save(context.Context, *Comment) error
+	Update(context.Context, Comment, string) (Comment, error)
 	DeleteById(context.Context, string) error
 	FindAllByUser(context.Context, *[]Comment, string) error
 	FindAllByPhoto(context.Context, *[]Comment, string) error
